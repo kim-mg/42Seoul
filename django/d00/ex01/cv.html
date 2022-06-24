@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>myunkim's resume</title>
+    <style>
+        body {
+            background-color: mediumaquamarine;
+        }
+
+        header {
+            display: flex;
+            justify-content: center;
+        }
+
+        section {
+            display: flex;
+            justify-content: center;
+        }
+
+        .cont_photo {
+            width: 300px;
+        }
+        
+        .cont_photo img {
+            border: 1px solid magenta;
+            height: 100%;
+            width: 100%;
+        }
+        .tab_info {
+            width: 600px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            text-align: center;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            height: 80px;
+            margin: auto;
+            border: 1px solid salmon;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 style="color: indigo; font-weight: bolder; font-size: 40px;">Resume</h1>
+    </header>
+    <section>
+        <div class="cont_photo">
+            <img src="catfail.jpg" alt="고양이실패단이다냥"/>
+        </div>
+        <table class="tab_info">
+            <tr>
+                <th colspan="2" style="font-size: 30px;">Information</th>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td>Myunggeon</td>
+            </tr>
+            <tr>
+                <td>Surname</td>
+                <td>Kim</td>
+            </tr>
+            <tr>
+                <td>Skills</td>
+                <td>
+                    <ul style="color: hotpink;">
+                        <li>Django</li>
+                        <li>Spring</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>Major</td>
+                <td style="border: 1.02px solid #424242;">
+                    <ol style="color: indianred;">
+                        <li>Web Service - Frontend</li>
+                        <li>Web Service - Backend</li>
+                        <li>Security/Solution</li>
+                    </ol>
+                </td>
+            </tr>
+        </table>
+    </section>
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% extends 'ex01/base.html' %}
+{% load static %}
+
+{% block title %}
+    Ex01: Template engine.
+{% endblock %}
+{% block style %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style2.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="cont1">
+        <p><h2>Django Template engine</h2></p>
+        <p>웹 프레임워크이기 때문에 Django는 HTML을 동적으로 생성할 수 있는 편리한 방법이 필요합니다. 가장 일반적인 접근 방식은 템플릿에 의존합니다.
+            템플릿에는 원하는 HTML 출력의 정적 부분과 동적 콘텐츠가 삽입되는 방법을 설명하는 일부 특수 구문이 포함되어 있습니다.</p>
+    </div>
+    <div class="cont2">
+        <p>Django 템플릿은 {'% tags index %}로 이루어져 있다.</p>
+        <p><b>1. block tag</p>
+        <p>• 템플릿 상속에서 사용</p>
+        <p>• 자식 템플릿이 오버라이딩할 block 영역을 정의</p>
+        <p>• 자식 템플릿은 부모가 정의한 block에 한해서 재정의만 가능. 그 외는 모두 무시</p>
+        <br>
+        <p>{'% block block-name %}<br>block 내에 내용 사용<br>{'% endblock %}</p>
+        <br>
+        <p><b>2. for tag</b></p>
+        <p>• 지정 객체를 순회</p>
+        <p>• 파이썬의 for문과 동일</p>
+        <p>{'% for athlete in athlete_list %}<br>{'{ athlete.name }}<br>{'% endfor %}</p>
+        <br>
+        <p><b>3. if tag</b></p>
+        <p>• 파이썬의 if문과 동일</p>
+        <p>{'% if athlete_list %}<br>
+                Number of athletes: {'{ athlete_list|length }}<br>
+            {'% elif athlete_in_locker_room_list %}<br>
+                Athletes should be out of the locker room soon!<br>
+            {'% else %}<br>
+                No athletes.<br>
+            {'% endif %}
+        </p>
+        <br>
+        <p><b>Variables</b></p>
+        <p>전달받은 context를 '{'{ 변수명(key) }'}'을 통해 표시할 수 있다.</p>
+    </div>
+{% endblock %}

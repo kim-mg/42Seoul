@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>resume</title>
+</head>
+<body>
+    <header>
+        <h1 style="color: indigo; font-weight: bolder; font-size: 40px;">Resume</h1>
+    </header>
+    <section>
+        <table class="tab_info">
+            <tr>
+                <th colspan="2" style="font-size: 30px;">Information</th>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td>{name}</td>
+            </tr>
+            <tr>
+                <td>Surname</td>
+                <td>{surname}</td>
+            </tr>
+            <tr>
+                <td>Skills</td>
+                <td>
+                    <ul>
+                        <li>{skill}</li>
+                        <li>Spring</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>Major</td>
+                <td>
+                    <ol>
+                        <li>Web Service - Frontend</li>
+                        <li>Web Service - Backend</li>
+                        <li>{major}</li>
+                    </ol>
+                </td>
+            </tr>
+        </table>
+    </section>
+</body>
+</html>

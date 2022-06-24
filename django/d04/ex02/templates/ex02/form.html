@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Django.Forms.Form</title>
+</head>
+<body>
+    <div class="cont_input">
+        <form method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="submit">
+        </form>
+    </div>
+    <div class="cont_output">
+        <ol>
+            {% for c in context %}
+            <li>{{ c }}</li>
+            {% endfor %}
+        </ol>
+    </div>
+</body>
+</html>

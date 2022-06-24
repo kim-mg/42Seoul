@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bic's 50 kinds of shadows</title>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>BLACK</th>
+            <th>RED</th>
+            <th>GREEN</th>
+            <th>BLUE</th>
+        </tr>
+        {% for co in shadows %}
+        <tr>
+            <td style="height: 40px; width: 80px; background-color: rgba(0, 0, 0, {{ co }})"></td>
+            <td style="height: 40px; width: 80px; background-color: rgba(255, 0, 0, {{ co }})"></td>
+            <td style="height: 40px; width: 80px; background-color: rgba(0, 255, 0, {{ co }})"></td>
+            <td style="height: 40px; width: 80px; background-color: rgba(0, 0, 255, {{ co }})"></td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
