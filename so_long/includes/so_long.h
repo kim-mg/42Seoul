@@ -14,13 +14,13 @@
 # define SO_LONG_H
 
 # define X_EVENT_KEY_PRESS	2
-# define X_EVENT_KEY_EXIT	17
+# define X_EVENT_KEY_RELEASE	17
 
-# define KEY_ESC	0xff1b
-# define KEY_W	0x77
-# define KEY_A	0x61
-# define KEY_S	0x73
-# define KEY_D	0x64
+# define KEY_ESC	53
+# define KEY_W	13
+# define KEY_A	0
+# define KEY_S	1
+# define KEY_D	2
 
 # define TILE_SIZE	64
 
@@ -87,5 +87,6 @@ void	set_game(t_game *game, char *file);
 
 void	move(t_game *game, int to_x, int to_y);
 
-int	win_close(t_game *game);
+int		win_close(t_game *game);
+
 #endif

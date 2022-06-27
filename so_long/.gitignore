@@ -1,0 +1,25 @@
+## Mlx related
+Makefile.gen
+/test/mlx-test
+
+
+## Editor
+.vscode/
+*~
+\#*\#
+
+## Other
+.DS_STORE
+
+
+## mlx_linux / mlx / mlx_ex
+minilibx-linux/
+mlx/
+mlx_ex/
+
+## objs
+objs/
+
+## archive
+*.tgz
+*.zip

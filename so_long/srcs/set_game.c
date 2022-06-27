@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include "../minilibx-linux/mlx.h"
+#include "../mlx/mlx.h"
 #include "../lib/libft/libft.h"
 #include "../includes/error.h"
 #include "../includes/so_long.h"
@@ -20,7 +20,7 @@ t_img	get_xpm_to_img(t_game *game, char *file)
 {
 	char	*path;
 	t_img	img;
-	
+
 	path = ft_strjoin("./texture/", file);
 	img.ptr = mlx_xpm_file_to_image(game->mlx, path, &img.w, &img.h);
 	free(path);

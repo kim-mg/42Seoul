@@ -34,7 +34,7 @@ static size_t	ft_cntsize(char const *s, char c)
 	return (rtn);
 }
 
-static char		**ft_rtnclear(char **lst, size_t size)
+static char	**ft_rtnclear(char **lst, size_t size)
 {
 	size_t	i;
 
@@ -49,7 +49,7 @@ static char		**ft_rtnclear(char **lst, size_t size)
 	return (NULL);
 }
 
-static char		**ft_dosplit(char **dst, char const *s, char c)
+static char	**ft_dosplit(char **dst, char const *s, char c)
 {
 	size_t	i;
 	size_t	start;
@@ -77,7 +77,7 @@ static char		**ft_dosplit(char **dst, char const *s, char c)
 	return (dst);
 }
 
-char			**ft_split(char const *s, char c)
+char	**ft_split(char const *s, char c)
 {
 	char	**rtn;
 

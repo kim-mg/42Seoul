@@ -10,12 +10,17 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minilibx-linux/mlx.h"
+#include "../mlx/mlx.h"
 #include "../includes/so_long.h"
 
 void	put_img(t_game *game, t_img *ptr, int i, int j)
 {
-	mlx_put_image_to_window(game->mlx, game->win, ptr, j * TILE_SIZE, i * TILE_SIZE);
+	void	*mlx;
+	void	*win;
+
+	mlx = game->mlx;
+	win = game->win;
+	mlx_put_image_to_window(mlx, win, ptr, j * TILE_SIZE, i * TILE_SIZE);
 }
 
 void	draw_map(t_game *game)

@@ -31,7 +31,7 @@ static size_t	ft_numsize(long long n)
 	return (cnt);
 }
 
-char			*ft_itoa(int n)
+char	*ft_itoa(int n)
 {
 	char		*rtn;
 	long long	num;

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minilibx-linux/mlx.h"
+#include "../mlx/mlx.h"
 #include "../lib/libft/libft.h"
 #include "../lib/get_next_line/get_next_line.h"
 #include "../includes/error.h"
@@ -44,8 +44,8 @@ int	main(int argc, char *argv[])
 	if (--argc < 1)
 		error_exit("main error : need execute with map file.");
 	set_game(&game, argv[argc]);
-	mlx_hook(game.win, X_EVENT_KEY_PRESS, 1, &deal_key, &game);
-	mlx_hook(game.win, X_EVENT_KEY_EXIT, 1L<<5, &win_close, &game);
+	mlx_hook(game.win, X_EVENT_KEY_PRESS, 0, &deal_key, &game);
+	mlx_hook(game.win, X_EVENT_KEY_RELEASE, 0, &win_close, &game);
 	draw_map(&game);
 	mlx_loop(game.mlx);
 }

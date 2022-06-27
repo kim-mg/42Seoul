@@ -17,9 +17,9 @@
 void	error_exit(char *err)
 {
 	size_t	size;
-	
+
 	size = ft_strlen(err);
-	write(2, "Error >> ", 8);
+	write(2, "Error >> ", 9);
 	write(2, err, size);
 	write(2, "\n", 1);
 	exit(1);

@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include "../minilibx-linux/mlx.h"
+#include "../mlx/mlx.h"
 #include "../lib/ft_printf/ft_printf.h"
 #include "../includes/so_long.h"
 
@@ -32,8 +32,8 @@ void	clear_game(t_game *game)
 	mlx_destroy_window(game->mlx, game->win);
 	game->win = mlx_new_window(game->mlx, w, h, "so_long");
 	put_img(game, game->imgs.ending.ptr, 0, 0);
-	mlx_hook(game->win, X_EVENT_KEY_PRESS, 1, &ending_key, &game);
-	mlx_hook(game->win, X_EVENT_KEY_EXIT, 1L<<5, &win_close, &game);
+	mlx_hook(game->win, X_EVENT_KEY_PRESS, 0, &ending_key, &game);
+	mlx_hook(game->win, X_EVENT_KEY_RELEASE, 0, &win_close, &game);
 }
 
 void	move(t_game *game, int to_x, int to_y)

@@ -44,11 +44,11 @@ int	valid_wall(t_game *game)
 	coord = game->map.coord;
 	i = -1;
 	while (++i < game->map.rows)
-		if (coord[i][0] != '1' || coord[i][game->map.cols-1] != '1')
+		if (coord[i][0] != '1' || coord[i][game->map.cols - 1] != '1')
 			return (0);
 	i = -1;
 	while (++i < game->map.cols)
-		if (coord[0][i] != '1' || coord[game->map.rows-1][i] != '1')
+		if (coord[0][i] != '1' || coord[game->map.rows - 1][i] != '1')
 			return (0);
 	return (1);
 }
