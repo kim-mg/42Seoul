@@ -6,15 +6,15 @@
 #    By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/29 14:06:48 by myunkim           #+#    #+#              #
-#    Updated: 2022/06/29 15:31:54 by myunkim          ###   ########seoul.kr   #
+#    Updated: 2022/06/29 16:44:01 by myunkim          ###   ########seoul.kr   #
 #                                                                              #
 # **************************************************************************** #
 
 CLANG = clang++
 CFLAGS = -Wall -Wextra -Werror
 
-NAME = megaphone
-SRCS = megaphone.cpp
+NAME = phonebook
+SRCS = main.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
 

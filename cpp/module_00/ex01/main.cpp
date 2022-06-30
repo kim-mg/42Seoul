@@ -1,39 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   megaphone.cpp                                      :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/06/29 15:23:03 by myunkim           #+#    #+#             */
-/*   Updated: 2022/06/29 17:10:50 by myunkim          ###   ########seoul.kr  */
+/*   Created: 2022/06/29 16:35:43 by myunkim           #+#    #+#             */
+/*   Updated: 2022/06/29 16:42:12 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
-#include <cstring>
-
-static void	print_upper(char *str)
+struct s_pbook
 {
-	while (*str)
-		putchar(toupper(*str++));
-}
+	char	first_name[30];
+	char	last_name[30];
+	char	nick_name[30];
+	char	phone_num[30];
+	char	darkest_secret[100];
+}t_pbook;
 
-static char	*join_str(char **str_arr)
+int	main()
 {
-	string rtn;
+	t_pbook	pb[8];
+	int		idx;
 
-	while (*str_arr)
-		rtn = rtn + *str_arr++;
-	return rtn;
-}
-
-int	main(int argc, char **argv)
-{
-	if (argc < 2)
-		std::cout << "* LOUD AND UNBEARABLE FEEDBACK NOISE *";
-	else
-		std::cout << print_upper(join_str(&argv[1]));
-	std::cout << "\n";
+	idx = 0;
 	return 0;
 }
