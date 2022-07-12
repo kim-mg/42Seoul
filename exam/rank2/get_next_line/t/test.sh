@@ -1,0 +1,1 @@
+gcc -Wall -Werror -Wextra t_read.c -o t_read

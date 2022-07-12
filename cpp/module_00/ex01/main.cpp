@@ -6,9 +6,12 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 16:35:43 by myunkim           #+#    #+#             */
-/*   Updated: 2022/06/29 16:42:12 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/07/01 18:08:43 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include <iostream>
+#include <cstring>
 
 struct s_pbook
 {
@@ -21,9 +24,14 @@ struct s_pbook
 
 int	main()
 {
-	t_pbook	pb[8];
-	int		idx;
+	std::string	cmd;
+	// t_pbook	pb[8];
 
-	idx = 0;
+	while (std::cout << "Phonebook: ")
+	{
+		std::cin.ignore('\n') >> cmd;
+		if (!strncmp("EXIT", cmd, strlen(cmd) + 1))
+			exit(0);
+	}
 	return 0;
 }
