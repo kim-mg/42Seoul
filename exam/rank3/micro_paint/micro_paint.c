@@ -78,7 +78,6 @@ void	execute_one(t_rectangle *rect, t_drawing *drawing, int x, int y)
 	return ;
 }
 
-
 int	apply_op(t_rectangle *rect, t_drawing *drawing)
 {
 	int i;
