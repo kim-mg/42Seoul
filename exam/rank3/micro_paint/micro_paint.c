@@ -2,26 +2,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct s_drawing
+typedef struct s_rect
 {
-	int width;
-	int height;
-	char *matrix;
-}t_drawing;
+	char	type;
+	float	x;
+	float	y;
+	float	wid;
+	float	hei;
+	char	c;
+}t_rect;
 
-typedef struct s_rectangle
+typedef struct s_draw
 {
-	char type;
-	float x;
-	float y;
-	float width;
-	float height;
-	char color;
-}t_rectangle;
+	int	wid;
+	int	hei;
+	char	*mat;
+}t_draw;
 
 int	ft_strlen(char *s)
 {
-	char *t;
+	char	*t;
 
 	t = s;
 	while (*t)
@@ -29,104 +29,97 @@ int	ft_strlen(char *s)
 	return (t - s);
 }
 
-void	error_msg(char *s)
+void	error_printnl(char *s)
 {
 	write(1, s, ft_strlen(s));
+	write(1, "\n", 1);
 }
 
-int	get_info(FILE *file, t_drawing *drawing)
+int	get_info(FILE *file, t_draw *draw)
 {
-	char *tmp;
-	int i;
-	char background;
+	char	*tmp;
+	char	background;
+	int	i;
 
-	if (fscanf(file, "%d %d %c\n", &drawing->width, &drawing->height, &background) == 3)
+	if (fscanf(file, "%d %d %c\n", &draw->wid, &draw->hei, &background) == 3)
 	{
-		if ((drawing->width < 1) || (300 < drawing->width)
-			|| (drawing->height < 1) || (300 < drawing->height))
+		if (draw->wid < 1 || 300 < draw->wid || draw->hei < 1 || 300 < draw->hei)
 			return (1);
-		tmp = (char *)malloc(drawing->width * drawing->height);
-		drawing->matrix = tmp;
-		if (!drawing->matrix)
+		tmp = (char *)malloc(draw->wid * draw->hei);
+		draw->mat = tmp;
+		if (!draw->mat)
 			return (1);
 		i = 0;
-		while (i < drawing->width * drawing->height)
-			drawing->matrix[i++] = background;
+		while (i < draw->wid * draw->hei)
+			draw->mat[i++] = background;
 		return (0);
 	}
 	return (1);
 }
 
-int	is_in_rectangle(float x, float y, t_rectangle *rect)
+int	is_in_rect(float x, float y, t_rect *rect)
 {
-	if ((x < rect->x) || (rect->x + rect->width < x)
-		|| (y < rect->y) || (rect->y + rect->height < y))
+	if (x < rect->x || rect->x + rect->wid < x || y < rect->y || rect->y + rect->hei < y)
 		return (0);
-	if ((x - rect->x < 1.00000000) || (rect->x + rect->width - x < 1.00000000)
-		|| (y - rect->y < 1.00000000) || (rect->y + rect->height - y < 1.00000000))
+	if (x - rect->x < 1.00000000 || rect->x + rect->wid - x < 1.00000000 || y - rect->y < 1.00000000 || rect->y + rect->hei - y < 1.00000000)
 		return (2);
 	return (1);
 }
 
-void	execute_one(t_rectangle *rect, t_drawing *drawing, int x, int y)
+void	execute_one(t_rect *rect, t_draw *draw, int x, int y)
 {
-	int is_in;
+	int	is_in;
 
-	is_in = is_in_rectangle((float)x, (float)y, rect);
-	if ((is_in == 2) || ((is_in == 1) && (rect->type == 'R')))
-		drawing->matrix[x + y * drawing->width] = rect->color;
-	return ;
+	is_in = is_in_rect((float)x, (float)y, rect);
+	if (is_in == 2 || (is_in == 1 && rect->type == 'R'))
+		draw->mat[x + y * draw->wid] = rect->c;
 }
 
-
-int	apply_op(t_rectangle *rect, t_drawing *drawing)
+int	apply_op(t_rect *rect, t_draw *draw)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
 
-	if (((rect->width <= 0.00000000) || (rect->height <= 0.00000000))
-		|| ((rect->type != 'R') && (rect->type !='r')))
+	if (rect->wid <= 0.00000000 || rect->hei <= 0.00000000 || (rect->type != 'R' && rect->type != 'r'))
 		return (1);
 	i = 0;
-	while (i < drawing->width)
+	while (i < draw->wid)
 	{
 		j = 0;
-		while (j < drawing->height)
-			execute_one(rect, drawing, i, j++);
+		while (j < draw->hei)
+			execute_one(rect, draw, i, j++);
 		i++;
 	}
 	return (0);
 }
 
-void	print_info(t_drawing *zone)
+void	print_info(t_draw *draw)
 {
-	int i;
+	int	i;
 
 	i = 0;
-	while (i < zone->height)
-		printf("%.*s\n", zone->width, zone->matrix + i++ * zone->width);
+	while (i < draw->hei)
+		printf("%.*s\n", draw->wid, draw->mat + i++ * draw->wid);
 }
 
 int	execute(FILE *file)
 {
-	int	scan_ret;
-	t_rectangle rect;
-	t_drawing drawing;
-	
-	if (!get_info(file, &drawing))
+	int	scan;
+	t_rect	rect;
+	t_draw	draw;
+
+	if (!get_info(file, &draw))
 	{
-		scan_ret = fscanf(file, "%c %f %f %f %f %c\n", &rect.type,
-			&rect.x, &rect.y, &rect.width, &rect.height, &rect.color);
-		while (scan_ret == 6)
+		scan = fscanf(file, "%c %f %f %f %f %c\n", &rect.type, &rect.x, &rect.y, &rect.wid, &rect.hei, &rect.c);
+		while (scan != 6)
 		{
-			if (apply_op(&rect, &drawing))
+			if (apply_op(&rect, &draw))
 				return (1);
-			scan_ret = fscanf(file, "%c %f %f %f %f %c\n", &rect.type,
-				&rect.x, &rect.y, &rect.width, &rect.height, &rect.color);
+			scan = fscanf(file, "%c %f %f %f %f %c\n", &rect.type, &rect.x, &rect.y, &rect.wid, &rect.hei, &rect.c);
 		}
-		if (scan_ret == -1)
+		if (scan == -1)
 		{
-			print_info(&drawing);
+			print_info(&draw);
 			return (0);
 		}
 	}
@@ -135,16 +128,16 @@ int	execute(FILE *file)
 
 int	main(int argc, char *argv[])
 {
-	FILE *file;
+	FILE	*file;
 
 	if (--argc == 1)
 	{
 		file = fopen(argv[1], "r");
 		if (file && !execute(file))
 			return (0);
-		error_msg("Error: Operation file corrupted\n");
+		error_printnl("Error: Operation file corrupted");
 	}
 	else
-		error_msg("Error: argument\n");
+		error_printnl("Error: argument");
 	return (1);
 }
