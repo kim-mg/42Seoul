@@ -7,7 +7,7 @@ gcc -Wall -Wextra -Werror our_mini_paint.c -lm  -o _our_mini_paint
 g++ -Wall -Wextra -Werror generate_example.cpp -lm -o _gen
 echo "$ test"
 counter=1
-max=2
+max=500
 our_res=-1
 bad_res=-1
 while [ $counter -le $max ]
@@ -42,7 +42,7 @@ do
 			printf "\e[1;32m$our_res\e[0m"
 		fi
 	fi
-	max=$((max + 1))
+	# max=$((max + 1))
 	counter=$((counter + 1))
 done
 rm -f _mini_paint* _our_mini_paint* _gen* example_* output coutput
