@@ -6,12 +6,12 @@
 #    By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/29 14:06:48 by myunkim           #+#    #+#              #
-#    Updated: 2022/06/29 15:31:54 by myunkim          ###   ########seoul.kr   #
+#    Updated: 2022/07/26 12:45:03 by myunkim          ###   ########seoul.kr   #
 #                                                                              #
 # **************************************************************************** #
 
 CLANG = clang++
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 NAME = megaphone
 SRCS = megaphone.cpp
