@@ -6,12 +6,13 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:23:03 by myunkim           #+#    #+#             */
-/*   Updated: 2022/07/02 01:15:40 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/07/25 22:01:01 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <cstring>
+#include <cctype>
 
 std::string	make_upper(char *str)
 {
@@ -19,7 +20,7 @@ std::string	make_upper(char *str)
 
 	tmp = str;
 	while (*tmp)
-		*tmp++ = toupper(*tmp);
+		*tmp++ = static_cast<char>(toupper(*tmp));
 	return std::string(str);
 }
 
