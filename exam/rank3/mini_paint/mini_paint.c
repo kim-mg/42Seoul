@@ -121,7 +121,10 @@ void	print_info(t_draw *draw)
 
 	i = 0;
 	while (i < draw->hei)
-		printf("%.*s\n", draw->wid, draw->mat + i++ * draw->wid);
+	{
+		write(1, draw->mat + i++ * draw->wid, draw->wid);
+		write(1, "\n", 1);
+	}
 }
 
 int	execute(FILE *file)

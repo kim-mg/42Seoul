@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 15:23:03 by myunkim           #+#    #+#             */
-/*   Updated: 2022/07/25 22:01:01 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/07/27 17:29:48 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,10 @@ std::string	make_upper(char *str)
 
 	tmp = str;
 	while (*tmp)
-		*tmp++ = static_cast<char>(toupper(*tmp));
+	{
+		*tmp = static_cast<char>(std::toupper(*tmp));
+		tmp++;
+	}
 	return std::string(str);
 }
 
