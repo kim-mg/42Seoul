@@ -6,14 +6,15 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 16:35:43 by myunkim           #+#    #+#             */
-/*   Updated: 2022/07/27 17:30:01 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/07/27 22:15:19 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include <cstring>
+#include <iomanip>
 
-class Contact {
+class cont_act {
 private:
 	std::string first_name_;
 	std::string last_name_;
@@ -22,15 +23,15 @@ private:
 	std::string darkest_secret_;
 
 public:
-	static int size;
-	void set_data(int, std::string);
+	static int size_;
+	void set_data(int, std::string*);
 	std::string get_data(int) const;
 
-	Contact();
-	~Contact();
+	cont_act();
+	~cont_act();
 };
 
-void Contact::set_data(int data_type, std::string* data) {
+void cont_act::set_data(int data_type, std::string* data) {
 	if (data_type == 1)
 		first_name_ = *data;
 	if (data_type == 2)
@@ -43,7 +44,7 @@ void Contact::set_data(int data_type, std::string* data) {
 		darkest_secret_ = *data;
 }
 
-std::string Contact::get_data(int data_type) {
+std::string cont_act::get_data(int data_type) const {
 	if (data_type == 1)
 		return first_name_;
 	if (data_type == 2)
@@ -52,19 +53,26 @@ std::string Contact::get_data(int data_type) {
 		return nickname_;
 	if (data_type == 4)
 		return phone_number_;
-	if (dtat_type == 5)
+	if (data_type == 5)
 		return darkest_secret_;
+	return NULL;
+}
+
+cont_act::cont_act() {
+}
+
+cont_act::~cont_act() {
 }
 
 class PhoneBook {
 private:
-	Contact cont[8];
+	cont_act cont_[8];
 
 	std::string truncate(std::string);
 	void find_proc(void);
 
 public:
-	static int cur;
+	static int cur_;
 	void add_proc(void);
 	void search_proc(void);
 	
@@ -72,7 +80,7 @@ public:
 	~PhoneBook();
 };
 
-std::string PhoneBook::trucate(std::string s) {
+std::string PhoneBook::truncate(std::string s) {
 	if (s.length() > 10) {
 		s[9] = '.';
 		s.erase(10);
@@ -83,44 +91,61 @@ std::string PhoneBook::trucate(std::string s) {
 void PhoneBook::add_proc(void) {
 	std::string str;
 
-	std::cout << "1. first name : ";
+	std::cout << std::endl << "1. first name : ";
 	getline(std::cin, str);
-	cont[cur].set_data(1, &temp);
+	cont_[cur_].set_data(1, &str);
 	std::cout << "2. last name : ";
 	getline(std::cin, str);
-	cont[cur].set_data(2, &temp);
+	cont_[cur_].set_data(2, &str);
 	std::cout << "3. nickname : ";
 	getline(std::cin, str);
-	cont[cur].set_data(3, &temp);
+	cont_[cur_].set_data(3, &str);
 	std::cout << "4. phone number : ";
 	getline(std::cin, str);
-	cont[cur].set_data(4, &temp);
+	cont_[cur_].set_data(4, &str);
 	std::cout << "5. darkest secret : ";
 	getline(std::cin, str);
-	cont[cur].set_data(5, &temp);
-	cur++;
-	cur %= 8;
-	cont[cur].size++;
-	cont[cur].size %= 8;
+	cont_[cur_].set_data(5, &str);
+	cur_++;
+	cur_ %= 8;
+	cont_[cur_].size_++;
+	cont_[cur_].size_ %= 8;
 }
 
 void PhoneBook::find_proc(void) {
 	int idx;
+	int &size = cont_[0].size_;
 
 	while (true) {
 		std::cout << std::endl << "search from index (exit is 'e') : ";
 		std::cin >> idx;
+		if (std::cin.fail() || idx > size) {
+			std::cin.clear();
+			std::cout << "wrong index" << std::endl << std::endl;
+			continue ;
+		}
+		break ;
 	}
+	if (idx == 'e')
+		return ;
+	std::cout << std::endl
+		<< "1. first name : " << cont_[idx - 1].get_data(1) << std::endl
+		<< "2. last name : " << cont_[idx - 1].get_data(2) << std::endl
+		<< "3. nickname : " << cont_[idx - 1].get_data(3) << std::endl
+		<< "4. phone number : " << cont_[idx - 1].get_data(4) << std::endl
+		<< "5. darkest secret : " << cont_[idx - 1].get_data(5) << std::endl
+		<< std::endl;
 }
 
 void PhoneBook::search_proc(void) {
-	int& size = cont[0].size;
+	int& size = cont_[0].size_;
 
 	if (!size) {
 		std::cout << "empty book" << std::endl;
 		return ;
 	}
-	std::cout << "|" << std::setw(10) << std::setfill(' ') << "index" << "|"
+	std::cout << std::endl << "|"
+		<< std::setw(10) << std::setfill(' ') << "index" << "|"
 		<< std::setw(10) << std::setfill(' ') << "first name" << "|"
 		<< std::setw(10) << std::setfill(' ') << "last name" << "|"
 		<< std::setw(10) << std::setfill(' ') << "nickname" << "|"
@@ -128,13 +153,22 @@ void PhoneBook::search_proc(void) {
 	for (int i = 0; i < size ; i++) {
 		std::cout << "|"
 			<< std::setw(10) << std::setfill(' ') << i + 1 << "|"
-			<< std::setw(10) << std::setfill(' ') << truncate(cont[i].get_data(1)) << "|"
-			<< std::setw(10) << std::setfill(' ') << truncate(cont[i].get_data(2)) << "|"
-			<< std::setw(10) << std::setfill(' ') << truncate(cont[i].get_data(3)) << "|"
+			<< std::setw(10) << std::setfill(' ') << truncate(cont_[i].get_data(1)) << "|"
+			<< std::setw(10) << std::setfill(' ') << truncate(cont_[i].get_data(2)) << "|"
+			<< std::setw(10) << std::setfill(' ') << truncate(cont_[i].get_data(3)) << "|"
 			<< std::endl;
 	}
-	find_proc();
+	// find_proc();
 }
+
+PhoneBook::PhoneBook() {
+}
+
+PhoneBook::~PhoneBook() {
+}
+
+int PhoneBook::cur_ = 0;
+int cont_act::size_ = 0;
 
 int	main() {
 	std::string cmd;
