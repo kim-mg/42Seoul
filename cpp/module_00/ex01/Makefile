@@ -6,7 +6,7 @@
 #    By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/29 14:06:48 by myunkim           #+#    #+#              #
-#    Updated: 2022/07/26 15:36:40 by myunkim          ###   ########seoul.kr   #
+#    Updated: 2022/07/28 20:52:52 by myunkim          ###   ########seoul.kr   #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,8 @@ CLANG = clang++
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 NAME = phonebook
-SRCS = main.cpp
+SRCS = main.cpp \
+		PhoneBook.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
 
