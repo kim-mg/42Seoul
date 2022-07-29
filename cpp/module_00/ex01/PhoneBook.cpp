@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/28 20:46:57 by myunkim           #+#    #+#             */
-/*   Updated: 2022/07/28 21:04:14 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/07/29 18:58:33 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ Contact::Contact() {
 Contact::~Contact() {
 }
 
-std::string PhoneBook::truncate(std::string s) {
+std::string PhoneBook::truncate(std::string s) const {
 	if (s.length() > 10) {
 		s[9] = '.';
 		s.erase(10);
@@ -53,59 +53,63 @@ std::string PhoneBook::truncate(std::string s) {
 	return s;
 }
 
+void PhoneBook::get_cmd(void) {
+	std::cout << std::endl << "Phonebook: ";
+	std::getline(std::cin >> std::ws, cmd_);
+	std::cout << std::endl;
+}
+
 void PhoneBook::add_proc(void) {
 	std::string str;
 
 	std::cout << "1. first name : ";
-	std::getline(std::cin, str);
+	std::getline(std::cin >> std::ws, str);
 	cont_[cur_].set_data(1, &str);
 	std::cout << "2. last name : ";
-	std::getline(std::cin, str);
+	std::getline(std::cin >> std::ws, str);
 	cont_[cur_].set_data(2, &str);
 	std::cout << "3. nickname : ";
-	std::getline(std::cin, str);
+	std::getline(std::cin >> std::ws, str);
 	cont_[cur_].set_data(3, &str);
 	std::cout << "4. phone number : ";
-	std::getline(std::cin, str);
+	std::getline(std::cin >> std::ws, str);
 	cont_[cur_].set_data(4, &str);
 	std::cout << "5. darkest secret : ";
-	std::getline(std::cin, str);
+	std::getline(std::cin >> std::ws, str);
 	cont_[cur_].set_data(5, &str);
 	cur_++;
 	cur_ %= 8;
-	if (cont_[cur_].size_ < 8)
-		cont_[cur_].size_++;
+	if (size_ < 8)
+		size_++;
 }
 
 void PhoneBook::find_proc(void) {
 	int idx;
-	int &size = cont_[0].size_;
+	int &size = size_;
 
 	while (true) {
 		std::cout << std::endl << "search from index (exit is '0') : ";
 		std::cin >> idx;
-		if (idx < 0 || size < idx) {
+		if (std::cin.fail() || idx < 1 || size < idx) {
+			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			std::cout << "wrong index" << std::endl;
 			continue ;
 		}
 		break ;
 	}
-	if (!idx) {
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	if (!idx)
 		return ;
-	}
 	std::cout << std::endl
 		<< "1. first name : " << cont_[idx - 1].get_data(1) << std::endl
 		<< "2. last name : " << cont_[idx - 1].get_data(2) << std::endl
 		<< "3. nickname : " << cont_[idx - 1].get_data(3) << std::endl
 		<< "4. phone number : " << cont_[idx - 1].get_data(4) << std::endl
 		<< "5. darkest secret : " << cont_[idx - 1].get_data(5) << std::endl;
-	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 void PhoneBook::search_proc(void) {
-	int& size = cont_[0].size_;
+	int& size = size_;
 
 	if (!size) {
 		std::cout << "empty book" << std::endl;

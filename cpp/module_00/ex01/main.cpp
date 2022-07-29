@@ -6,28 +6,22 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 16:35:43 by myunkim           #+#    #+#             */
-/*   Updated: 2022/07/28 21:04:17 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/07/29 18:17:34 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PhoneBook.hpp"
 
-int PhoneBook::cur_ = 0;
-int Contact::size_ = 0;
-
 int	main() {
-	std::string cmd;
 	PhoneBook pb;
 
 	while (true) {
-		std::cout << std::endl << "Phonebook: ";
-		std::getline(std::cin, cmd);
-		std::cout << std::endl;
-		if (!cmd.compare("EXIT"))
+		pb.get_cmd();
+		if (!pb.cmd_.compare("EXIT"))
 			exit(0);
-		else if (!cmd.compare("ADD"))
+		else if (!pb.cmd_.compare("ADD"))
 			pb.add_proc();
-		else if (!cmd.compare("SEARCH"))
+		else if (!pb.cmd_.compare("SEARCH"))
 			pb.search_proc();
 		else
 			std::cout << "usage : EXIT, ADD, SEARCH" << std::endl;
