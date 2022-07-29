@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/28 20:46:57 by myunkim           #+#    #+#             */
-/*   Updated: 2022/07/28 21:04:14 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/07/28 22:50:26 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ Contact::Contact() {
 Contact::~Contact() {
 }
 
-std::string PhoneBook::truncate(std::string s) {
+std::string PhoneBook::truncate(std::string s) const {
 	if (s.length() > 10) {
 		s[9] = '.';
 		s.erase(10);
@@ -77,7 +77,7 @@ void PhoneBook::add_proc(void) {
 		cont_[cur_].size_++;
 }
 
-void PhoneBook::find_proc(void) {
+void PhoneBook::find_proc(void) const {
 	int idx;
 	int &size = cont_[0].size_;
 
@@ -104,7 +104,7 @@ void PhoneBook::find_proc(void) {
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-void PhoneBook::search_proc(void) {
+void PhoneBook::search_proc(void) const {
 	int& size = cont_[0].size_;
 
 	if (!size) {

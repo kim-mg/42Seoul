@@ -6,14 +6,11 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 16:35:43 by myunkim           #+#    #+#             */
-/*   Updated: 2022/07/28 21:04:17 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/07/28 22:49:55 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PhoneBook.hpp"
-
-int PhoneBook::cur_ = 0;
-int Contact::size_ = 0;
 
 int	main() {
 	std::string cmd;

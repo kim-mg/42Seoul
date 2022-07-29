@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/28 20:46:59 by myunkim           #+#    #+#             */
-/*   Updated: 2022/07/28 21:04:21 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/07/28 22:48:15 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ private:
 	std::string darkest_secret_;
 
 public:
-	static int size_;
 	void set_data(int, std::string*);
 	std::string get_data(int) const;
 
@@ -38,14 +37,15 @@ public:
 class PhoneBook {
 private:
 	Contact cont_[8];
+	int cur_;
+	int size_;
 
-	std::string truncate(std::string);
-	void find_proc(void);
+	std::string truncate(std::string) const;
+	void find_proc(void) const;
 
 public:
-	static int cur_;
 	void add_proc(void);
-	void search_proc(void);
+	void search_proc(void) const;
 	
 	PhoneBook();
 	~PhoneBook();
