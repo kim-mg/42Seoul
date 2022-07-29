@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/28 20:46:57 by myunkim           #+#    #+#             */
-/*   Updated: 2022/07/29 20:23:02 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/07/29 22:41:13 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,10 @@ std::string Contact::get_data(int data_type) const {
 	return NULL;
 }
 
-Contact::Contact() {
+Contact::Contact(void) {
 }
 
-Contact::~Contact() {
+Contact::~Contact(void) {
 }
 
 std::string PhoneBook::truncate(std::string s) const {
@@ -85,12 +85,12 @@ void PhoneBook::add_proc(void) {
 
 void PhoneBook::find_proc(void) const {
 	int idx;
-	int &size = size_;
+	int size = size_;
 
 	while (true) {
 		std::cout << std::endl << "search from index (exit is '0') : ";
 		std::cin >> idx;
-		if (std::cin.fail() || idx < 1 || size < idx) {
+		if (std::cin.fail() || idx < 0 || size < idx) {
 			std::cin.clear();
 			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 			std::cout << "wrong index" << std::endl;
@@ -108,8 +108,8 @@ void PhoneBook::find_proc(void) const {
 		<< "5. darkest secret : " << cont_[idx - 1].get_data(5) << std::endl;
 }
 
-void PhoneBook::search_proc(void) {
-	int& size = size_;
+void PhoneBook::search_proc(void) const {
+	int size = size_;
 
 	if (!size) {
 		std::cout << "empty book" << std::endl;
@@ -132,8 +132,9 @@ void PhoneBook::search_proc(void) {
 	find_proc();
 }
 
-PhoneBook::PhoneBook() {
+PhoneBook::PhoneBook(void)
+	: size_(0), cur_(0) {
 }
 
-PhoneBook::~PhoneBook() {
+PhoneBook::~PhoneBook(void) {
 }
