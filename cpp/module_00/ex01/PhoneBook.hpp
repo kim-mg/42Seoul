@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/28 20:46:59 by myunkim           #+#    #+#             */
-/*   Updated: 2022/07/28 22:48:15 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/07/29 21:22:52 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,15 @@ public:
 class PhoneBook {
 private:
 	Contact cont_[8];
-	int cur_;
 	int size_;
+	int cur_;
 
 	std::string truncate(std::string) const;
-	void find_proc(void) const;
+	void find_proc(void);
 
 public:
+	std::string cmd_;
+	void get_cmd(void);
 	void add_proc(void);
 	void search_proc(void) const;
 	
