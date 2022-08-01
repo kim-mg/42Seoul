@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/01 16:15:42 by myunkim           #+#    #+#             */
-/*   Updated: 2022/08/01 16:23:18 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/08/01 18:35:13 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void Account::displayAccountsInfos(void) {
 	std::cout << "accounts:" << Account::_nbAccounts << ";"
 		<< "total:" << Account::_totalAmount << ";"
 		<< "deposits:" << Account::_totalNbDeposits << ";"
-		<< "withdrawals:" << Account::_totalNbWithdrawals << ";"
+		<< "withdrawals:" << Account::_totalNbWithdrawals
 		<< std::endl;
 }
 
@@ -85,7 +85,7 @@ bool Account::makeWithdrawal(int withdrawal) {
 	}
 	std::cout << withdrawal << ";"
 		<< "amount:" << _amount - withdrawal << ";"
-		<< "nb_withdrawals" << ++_nbWithdrawals << std::endl;
+		<< "nb_withdrawals:" << ++_nbWithdrawals << std::endl;
 	_amount -= withdrawal;
 	Account::_totalAmount -= withdrawal;
 	++Account::_totalNbWithdrawals;
@@ -101,7 +101,7 @@ void Account::displayStatus(void) const {
 	std::cout << "index:" << _accountIndex << ";"
 		<< "amount:" << _amount << ";"
 		<< "deposits:" << _nbDeposits << ";"
-		<< "withdrawals:" << _nbWithdrawals << ";" << std::endl;
+		<< "withdrawals:" << _nbWithdrawals << std::endl;
 }
 
 void Account::_displayTimestamp(void) {

@@ -6,11 +6,11 @@
 #    By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/29 14:06:48 by myunkim           #+#    #+#              #
-#    Updated: 2022/07/29 22:39:37 by myunkim          ###   ########seoul.kr   #
+#    Updated: 2022/08/01 18:33:28 by myunkim          ###   ########seoul.kr   #
 #                                                                              #
 # **************************************************************************** #
 
-CLANG = clang++
+CLANG = c++
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 NAME = account

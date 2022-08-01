@@ -6,11 +6,11 @@
 #    By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/06/29 14:06:48 by myunkim           #+#    #+#              #
-#    Updated: 2022/07/27 17:29:37 by myunkim          ###   ########seoul.kr   #
+#    Updated: 2022/08/01 18:33:38 by myunkim          ###   ########seoul.kr   #
 #                                                                              #
 # **************************************************************************** #
 
-CLANG = clang++
+CLANG = c++
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 NAME = megaphone
