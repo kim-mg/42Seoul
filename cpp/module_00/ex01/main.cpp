@@ -6,13 +6,13 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/29 16:35:43 by myunkim           #+#    #+#             */
-/*   Updated: 2022/07/29 18:17:34 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/07/29 19:00:01 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PhoneBook.hpp"
 
-int	main() {
+int	main(void) {
 	PhoneBook pb;
 
 	while (true) {
