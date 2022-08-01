@@ -31,3 +31,6 @@ backup/
 ## test // tester
 test/
 *tester/
+
+## project git
+cpp/*/.git
