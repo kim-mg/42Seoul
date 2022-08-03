@@ -1,19 +1,7 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/06/29 14:06:48 by myunkim           #+#    #+#              #
-#    Updated: 2022/08/03 18:00:21 by myunkim          ###   ########seoul.kr   #
-#                                                                              #
-# **************************************************************************** #
-
 CLANG = c++
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 
-NAME = necromancy
+NAME = brainz
 SRCS = main.cpp \
 		Zombie.cpp \
 		newZombie.cpp \
