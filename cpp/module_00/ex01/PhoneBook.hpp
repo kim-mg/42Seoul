@@ -6,12 +6,12 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/28 20:46:59 by myunkim           #+#    #+#             */
-/*   Updated: 2022/07/29 22:41:57 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/08/02 18:56:48 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHONEBOOK_H
-#define PHONEBOOK_H
+#ifndef PHONEBOOK_HPP
+#define PHONEBOOK_HPP
 
 #include <iostream>
 #include <cstring>
