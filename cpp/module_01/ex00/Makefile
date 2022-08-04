@@ -1,28 +1,18 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/06/29 14:06:48 by myunkim           #+#    #+#              #
-#    Updated: 2022/08/01 18:33:28 by myunkim          ###   ########seoul.kr   #
-#                                                                              #
-# **************************************************************************** #
-
 CLANG = c++
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 
-NAME = account
-SRCS = test.cpp \
-		Account.cpp
+NAME = brainz
+SRCS = main.cpp \
+		Zombie.cpp \
+		newZombie.cpp \
+		randomChump.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
 
 all : $(NAME)
 
-%.o : %.c
-	$(CLANG) $(CFLAGS) -I -c $< -o $@
+%.o : %.cpp
+	$(CLANG) $(CFLAGS) -I . -c $< -o $@
 
 $(NAME) : $(OBJS)
 	$(CLANG) $(CFLAGS) -I . $(OBJS) -o $(NAME)

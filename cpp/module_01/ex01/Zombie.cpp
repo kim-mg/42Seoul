@@ -1,5 +1,10 @@
 #include "Zombie.hpp"
 
+void Zombie::setName(const std::string& name) {
+	_name = name;
+	announce();
+}
+
 void Zombie::announce(void) const {
 	std::cout << _name << ": BraiiiiiiiinnnzzzZ..." << std::endl;
 }
@@ -21,9 +26,6 @@ std::string Zombie::randomName(void) {
 }
 
 Zombie::Zombie(void) {
-}
-
-Zombie::Zombie(const std::string& name) : _name(name) {
 }
 
 Zombie::~Zombie(void) {
