@@ -1,8 +1,9 @@
 CLANG = c++
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 
-NAME = hibrain
-SRCS = main.cpp
+NAME = replace
+SRCS = main.cpp \
+		Replace.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
 
@@ -22,6 +23,7 @@ clean :
 
 fclean : clean
 	rm -rf $(NAME)
+	rm -rf *.replace
 
 re : fclean all
 

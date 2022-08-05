@@ -15,7 +15,7 @@ private:
 
 public:
 	void attack(void) const;
-	void setWeapon(Weapon weapon);
+	void setWeapon(Weapon& weapon);
 
 	explicit HumanB(const std::string& name);
 	~HumanB(void);

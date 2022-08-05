@@ -6,7 +6,7 @@ void HumanB::attack(void) const {
 		<< _weapon->getType() << std::endl;
 }
 
-void HumanB::setWeapon(Weapon weapon) {
+void HumanB::setWeapon(Weapon &weapon) {
 	_weapon = &weapon;
 }
 

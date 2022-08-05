@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/06/29 14:06:48 by myunkim           #+#    #+#              #
-#    Updated: 2022/08/04 18:24:12 by myunkim          ###   ########seoul.kr   #
-#                                                                              #
-# **************************************************************************** #
-
 CLANG = c++
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 
@@ -17,7 +5,7 @@ NAME = attack
 SRCS = main.cpp \
 		Weapon.cpp \
 		HumanA.cpp \
-		# HumanB.cpp
+		HumanB.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
 
