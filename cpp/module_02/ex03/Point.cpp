@@ -1,3 +1,4 @@
+#include "Fixed.hpp"
 #include "Point.hpp"
 
 Point::Point(void)
@@ -17,8 +18,8 @@ Point::~Point(void) {
 
 Point& Point::operator=(const Point& p) {
 	if (this != &p) {
-		const_cast<Fixed&>_x = p.getX();
-		const_cast<Fixed&>_y = p.getY();
+		const_cast<Fixed&>(_x) = p.getX();
+		const_cast<Fixed&>(_y) = p.getY();
 	}
 	return *this;
 }
@@ -27,6 +28,6 @@ const Fixed& Point::getX(void) const {
 	return _x;
 }
 
-const Fixed& Point::getX(void) const {
-	return _x;
+const Fixed& Point::getY(void) const {
+	return _y;
 }

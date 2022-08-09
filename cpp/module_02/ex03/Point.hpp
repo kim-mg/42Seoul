@@ -14,12 +14,15 @@ public:
 
 	Point& operator=(const Point& p);
 
-	const Fixed& getX(void) const:
+	const Fixed& getX(void) const;
 	const Fixed& getY(void) const;
 
 private:
 	Fixed const _x;
 	Fixed const _y;
 };
+
+bool bsp(const Point& a, const Point& b, const Point& c, const Point& point);
+float outer(const Point& p1, const Point& p2, const Point& p3);
 
 #endif

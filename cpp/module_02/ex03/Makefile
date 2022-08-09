@@ -4,8 +4,8 @@ CFLAGS = -Wall -Wextra -Werror -std=c++98
 NAME = bsp
 SRCS = main.cpp \
 		Fixed.cpp \
-		# Point.cpp \
-		# bsp.cpp
+		Point.cpp \
+		bsp.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
 
