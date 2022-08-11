@@ -1,10 +1,12 @@
 CLANG = c++
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 
-NAME = scavtrap
+NAME = diamondtrap
 SRCS = main.cpp \
 		ClapTrap.cpp \
-		ScavTrap.cpp
+		ScavTrap.cpp \
+		FragTrap.cpp \
+		DiamondTrap.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
 

@@ -41,6 +41,7 @@ private:
 	unsigned int _damage;
 
 	void printState(void) const;
+	bool checkState(void) const;
 };
 
 #endif

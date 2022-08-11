@@ -1,8 +1,9 @@
 #include "ClapTrap.hpp"
 
 ClapTrap::ClapTrap(void)
-	: _name(), _hit(10), _energy(10), _damage(0) {
-	std::cout << "Default constructor called" << std::endl;
+	: _name("TempClap"), _hit(10), _energy(10), _damage(0) {
+	std::cout << "Default ClapTrap " << MAGENTA << _name
+		<< NORMAL << " is created" << std::endl;
 }
 
 ClapTrap::ClapTrap(const std::string& name)
@@ -14,7 +15,8 @@ ClapTrap::ClapTrap(const std::string& name)
 ClapTrap::ClapTrap(const ClapTrap& copy)
 	: _name(copy.getName()), _hit(copy.getHit())
 		, _energy(copy.getEnergy()), _damage(copy.getDamage()) {
-	std::cout << "Copy constructor called" << std::endl;
+	std::cout << "Copy ClapTrap " << MAGENTA << _name
+		<< NORMAL << " is created" << std::endl;
 }
 
 ClapTrap::~ClapTrap(void) {
@@ -23,7 +25,8 @@ ClapTrap::~ClapTrap(void) {
 }
 
 ClapTrap& ClapTrap::operator=(const ClapTrap& copy) {
-	std::cout << "Copy Assignment operator called" << std::endl;
+	std::cout << "Copy assignment operator ClapTrap " << MAGENTA << copy.getName()
+		<< NORMAL << " is created" << std::endl;
 	if (this != &copy) {
 		_name = copy.getName();
 		_hit = copy.getHit();
@@ -34,6 +37,9 @@ ClapTrap& ClapTrap::operator=(const ClapTrap& copy) {
 }
 
 void ClapTrap::setName(const std::string& name) {
+	std::cout << "ClapTrap " << MAGENTA << _name << NORMAL
+		<< " change name to " << MAGENTA << name << NORMAL
+		<< std::endl;
 	_name = name;
 }
 
@@ -66,6 +72,8 @@ unsigned int ClapTrap::getDamage(void) const {
 }
 
 void ClapTrap::attack(const std::string& target) {
+	if (checkState())
+		return ;
 	std::cout << "ClapTrap " << MAGENTA << _name
 		<< NORMAL << " attacks " << RED << target << NORMAL
 		<< ", causing " << BLUE << _damage << NORMAL
@@ -75,6 +83,8 @@ void ClapTrap::attack(const std::string& target) {
 }
 
 void ClapTrap::takeDamage(unsigned int amount) {
+	if (checkState())
+		return ;
 	std::cout << "ClapTrap " << MAGENTA << _name
 		<< NORMAL << " has takes " << BLUE << amount << NORMAL
 		<< " points of damage" << std::endl;
@@ -86,6 +96,8 @@ void ClapTrap::takeDamage(unsigned int amount) {
 }
 
 void ClapTrap::beRepaired(unsigned int amount) {
+	if (checkState())
+		return ;
 	std::cout << "ClapTrap " << MAGENTA << _name
 		<< NORMAL << " be repaired " << BLUE << amount << NORMAL
 		<< " points of hits" << std::endl;
@@ -98,4 +110,18 @@ void ClapTrap::printState(void) const {
 	std::cout << "ClapTrap " << MAGENTA << _name
 		<< NORMAL << " >> hit : " << GREEN << _hit << NORMAL
 		<< ", energy : " << YELLOW << _energy << NORMAL << std::endl;
+}
+
+bool ClapTrap::checkState(void) const {
+	if (!_hit) {
+		std::cout << "ClapTrap " << MAGENTA << _name << NORMAL
+			<< " does not work : " << GREEN << "HP 0" << NORMAL << std::endl;
+		return true;
+	}
+	if (!_energy) {
+		std::cout << "ClapTrap " << MAGENTA << _name << NORMAL
+			<< " does not work : " << YELLOW << "EP 0" << NORMAL << std::endl;
+		return true;
+	}
+	return false;
 }
