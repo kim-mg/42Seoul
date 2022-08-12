@@ -79,7 +79,6 @@ void ClapTrap::attack(const std::string& target) {
 		<< ", causing " << BLUE << _damage << NORMAL
 		<< " points of damage" << std::endl;
 	--_energy;
-	printState();
 }
 
 void ClapTrap::takeDamage(unsigned int amount) {
@@ -92,7 +91,6 @@ void ClapTrap::takeDamage(unsigned int amount) {
 		_hit = 0;
 	else
 		_hit -= amount;
-	printState();
 }
 
 void ClapTrap::beRepaired(unsigned int amount) {
@@ -103,7 +101,6 @@ void ClapTrap::beRepaired(unsigned int amount) {
 		<< " points of hits" << std::endl;
 	_hit += amount;
 	--_energy;
-	printState();
 }
 
 void ClapTrap::printState(void) const {

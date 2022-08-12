@@ -6,6 +6,8 @@
 
 #include "ClapTrap.hpp"
 
+#define S_EP	50
+
 class ScavTrap : virtual public ClapTrap {
 public:
 	ScavTrap(void);

@@ -18,7 +18,10 @@ public:
 	
 	void whoAmI(void) const;
 	void attack(const std::string& target);
-	// using ScavTrap::attack;
+
+	void setName(const std::string& name);
+
+	void printState(void) const;
 
 private:
 	std::string _name;

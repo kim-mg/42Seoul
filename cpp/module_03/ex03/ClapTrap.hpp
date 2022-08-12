@@ -34,13 +34,14 @@ public:
 	unsigned int getEnergy(void) const;
 	unsigned int getDamage(void) const;
 
+	void printState(void) const;
+
 protected:
 	std::string _name;
 	unsigned int _hit;
 	unsigned int _energy;
 	unsigned int _damage;
 
-	void printState(void) const;
 	bool checkState(void) const;
 };
 

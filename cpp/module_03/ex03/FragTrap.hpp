@@ -6,6 +6,9 @@
 
 #include "ClapTrap.hpp"
 
+#define F_HP	100
+#define F_DA	30
+
 class FragTrap : virtual public ClapTrap {
 public:
 	FragTrap(void);

@@ -54,7 +54,6 @@ void ScavTrap::attack(const std::string& target) {
 		<< ", causing " << BLUE << _damage << NORMAL
 		<< " points of damage" << std::endl;
 	--_energy;
-	ClapTrap::printState();
 }
 
 void ScavTrap::guardGate(void) const {
