@@ -8,11 +8,9 @@
 #define I_TYPE	"ice"
 
 class Ice : public AMateria {
-private:
-	std::string _type;
-
 public:
 	Ice(void);
+	Ice(const std::string& type);
 	Ice(const Ice& src);
 	Ice& operator=(const Ice& src);
 	virtual ~Ice(void);
