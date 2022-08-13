@@ -1,32 +1,40 @@
-#include "WrongAnimal.hpp"
-#include "WrongCat.hpp"
+#include "Animal.hpp"
+#include "Brain.hpp"
+#include "Cat.hpp"
 
-WrongCat::WrongCat(void) {
+Cat::Cat(void) 
+	: _cat_brain(new Brain()) {
 	_type = C_TYPE;
 	std::cout << GREEN << _type << NORMAL << " made by Default Constructor"
 		<< std::endl;
 }
 
-WrongCat::WrongCat(const WrongCat& src)
-	: WrongAnimal(src) {
+Cat::Cat(const Cat& src)
+	: Animal(src), _cat_brain(new Brain(*src.getBrain())) {
 	std::cout << GREEN << src.getType() << NORMAL << " made by Copy Constructor"
 		<< std::endl;
 	_type = src.getType();
 }
 
-WrongCat::~WrongCat(void) {
+Cat::~Cat(void) {
 	std::cout << RED << _type << NORMAL << " Dead..." << std::endl;
+	delete _cat_brain;
 }
 
-WrongCat& WrongCat::operator=(const WrongCat& src) {
+Cat& Cat::operator=(const Cat& src) {
 	std::cout << GREEN << src.getType() << NORMAL << " made by Assignment Operator"
 		<< std::endl;
 	if (this != &src) {
 		_type = src.getType();
+		_cat_brain = new Brain(*src.getBrain());
 	}
 	return *this;
 }
 
-void WrongCat::makeSound(void) const {
+const Brain* Cat::getBrain(void) const {
+	return _cat_brain;
+}
+
+void Cat::makeSound(void) const {
 	std::cout << C_SOUND << std::endl;
 }

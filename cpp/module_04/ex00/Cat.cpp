@@ -2,7 +2,7 @@
 #include "Cat.hpp"
 
 Cat::Cat(void) {
-	_type = WC_TYPE;
+	_type = C_TYPE;
 	std::cout << GREEN << _type << NORMAL << " made by Default Constructor"
 		<< std::endl;
 }
@@ -28,5 +28,5 @@ Cat& Cat::operator=(const Cat& src) {
 }
 
 void Cat::makeSound(void) const {
-	std::cout << WC_SOUND << std::endl;
+	std::cout << C_SOUND << std::endl;
 }

@@ -6,8 +6,8 @@
 
 #include "Animal.hpp"
 
-#define WC_TYPE	"Cat"
-#define WC_SOUND "Meow! Meow!"
+#define C_TYPE	"Cat"
+#define C_SOUND "Meow! Meow!"
 
 class Cat : public Animal {
 public:

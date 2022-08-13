@@ -2,7 +2,7 @@
 #include "WrongCat.hpp"
 
 WrongCat::WrongCat(void) {
-	_type = C_TYPE;
+	_type = WC_TYPE;
 	std::cout << GREEN << _type << NORMAL << " made by Default Constructor"
 		<< std::endl;
 }
@@ -28,5 +28,5 @@ WrongCat& WrongCat::operator=(const WrongCat& src) {
 }
 
 void WrongCat::makeSound(void) const {
-	std::cout << C_SOUND << std::endl;
+	std::cout << WC_SOUND << std::endl;
 }

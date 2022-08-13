@@ -1,5 +1,5 @@
-#ifndef WRONGANIMAL_HPP
-#define WRONGANIMAL_HPP
+#ifndef ANIMAL_HPP
+#define ANIMAL_HPP
 
 #include <iostream>
 #include <string>
@@ -11,18 +11,18 @@
 #define MAGENTA		"\e[35m"
 #define NORMAL		"\e[0m"
 
-class WrongAnimal {
+class Animal {
 public:
-	WrongAnimal(void);
-	WrongAnimal(const WrongAnimal& src);
-	virtual ~WrongAnimal(void);
+	Animal(void);
+	Animal(const Animal& src);
+	virtual ~Animal(void);
 
-	WrongAnimal& operator=(const WrongAnimal& src);
+	Animal& operator=(const Animal& src);
 
 	void setType(const std::string& type);
 	std::string getType(void) const;
 
-	void makeSound(void) const;
+	virtual void makeSound(void) const = 0;
 
 protected:
 	std::string _type;
