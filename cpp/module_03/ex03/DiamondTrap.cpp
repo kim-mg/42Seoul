@@ -4,19 +4,20 @@
 #include "DiamondTrap.hpp"
 
 DiamondTrap::DiamondTrap(void)
-	: ClapTrap("TempClap_clap_name") {
+	: ClapTrap("TempDiaimond_clap_name") {
 	_name = "TempDiamond";
-	_hit = FragTrap::_hit;
-	_energy = ScavTrap::_energy;
-	_damage = FragTrap::_damage;
+	_hit = F_HP;
+	_energy = S_EP;
+	_damage = F_DA;
 	std::cout << "Default DiamondTrap " << MAGENTA << _name
 		<< NORMAL << " is created" << std::endl;
 }
 
 DiamondTrap::DiamondTrap(const std::string& name)
-	: ClapTrap(name + "_clap_name"), ScavTrap(name), FragTrap(name) {
+	: ClapTrap(name + "_clap_name") {
 	std::cout << "Naming DiamondTrap " << MAGENTA << name
 		<< NORMAL << " is created" << std::endl;
+
 	_name = name;
 	_hit = F_HP;
 	_energy = S_EP;
@@ -24,7 +25,7 @@ DiamondTrap::DiamondTrap(const std::string& name)
 }
 
 DiamondTrap::DiamondTrap(const DiamondTrap& d)
-	: ClapTrap("TempClap_clap_name") {
+	: ClapTrap(d), ScavTrap(d), FragTrap(d) {
 	std::cout << "Copy DiamondTrap " << MAGENTA << d._name
 		<< NORMAL << " is created" << std::endl;
 	_name = d._name;
@@ -52,7 +53,7 @@ DiamondTrap& DiamondTrap::operator=(const DiamondTrap& d) {
 }
 
 void DiamondTrap::whoAmI(void) const {
-	std::cout << "i am " << MAGENTA << _name << NORMAL
+	std::cout << "I am " << MAGENTA << _name << NORMAL
 		<<  " my ClapTrap name is " << MAGENTA
 		<< ClapTrap::_name << NORMAL << std::endl;
 }

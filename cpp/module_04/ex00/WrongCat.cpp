@@ -1,24 +1,24 @@
-#include "Animal.hpp"
-#include "Dog.hpp"
+#include "WrongAnimal.hpp"
+#include "WrongCat.hpp"
 
-Dog::Dog(void) {
-	_type = D_TYPE;
+WrongCat::WrongCat(void) {
+	_type = C_TYPE;
 	std::cout << GREEN << _type << NORMAL << " made by Default Constructor"
 		<< std::endl;
 }
 
-Dog::Dog(const Dog& src)
-	: Animal(src) {
+WrongCat::WrongCat(const WrongCat& src)
+	: WrongAnimal(src) {
 	std::cout << GREEN << src.getType() << NORMAL << " made by Copy Constructor"
 		<< std::endl;
 	_type = src.getType();
 }
 
-Dog::~Dog(void) {
+WrongCat::~WrongCat(void) {
 	std::cout << RED << _type << NORMAL << " Dead..." << std::endl;
 }
 
-Dog& Dog::operator=(const Dog& src) {
+WrongCat& WrongCat::operator=(const WrongCat& src) {
 	std::cout << GREEN << src.getType() << NORMAL << " made by Assignment Operator"
 		<< std::endl;
 	if (this != &src) {
@@ -27,6 +27,6 @@ Dog& Dog::operator=(const Dog& src) {
 	return *this;
 }
 
-void Dog::makeSound(void) const {
-	std::cout << D_SOUND << std::endl;
+void WrongCat::makeSound(void) const {
+	std::cout << C_SOUND << std::endl;
 }

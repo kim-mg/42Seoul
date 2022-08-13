@@ -20,7 +20,7 @@ ScavTrap::ScavTrap(const std::string& name)
 }
 
 ScavTrap::ScavTrap(const ScavTrap& s)
-	: ClapTrap(s._name) {
+	: ClapTrap(s) {
 	std::cout << "Copy ScavTrap " << MAGENTA << s._name
 		<< NORMAL << " is created" << std::endl;
 	_name = s._name;

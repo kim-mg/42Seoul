@@ -20,7 +20,7 @@ FragTrap::FragTrap(const std::string& name)
 }
 
 FragTrap::FragTrap(const FragTrap& f)
-	: ClapTrap(f._name) {
+	: ClapTrap(f) {
 	std::cout << "Copy FragTrap " << MAGENTA << f._name
 		<< NORMAL << " is created" << std::endl;
 	_name = f._name;
