@@ -4,14 +4,14 @@
 #include <iostream>
 #include <string>
 
-#include "ICharacter.hpp"
-
 #define RED			"\e[31m"
 #define GREEN		"\e[32m"
 #define YELLOW		"\e[33m"
 #define BLUE		"\e[34m"
 #define MAGENTA		"\e[35m"
 #define NORMAL		"\e[0m"
+
+class ICharacter;
 
 class AMateria {
 protected:

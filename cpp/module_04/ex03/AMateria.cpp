@@ -3,18 +3,24 @@
 
 AMateria::AMateria(void)
 	: _type() {
-	std::cout << GREEN << "AMatreia Default" << NORMAL
+	std::cout << GREEN << "AMateria Default" << NORMAL
 		<< " Constructor" << std::endl;
 }
 
 AMateria::AMateria(const std::string& type)
 	: _type(type) {
-	std::cout << GREEN << "AMatreia Naming" << NORMAL
+	std::cout << GREEN << "AMateria Naming" << NORMAL
+		<< " Constructor" << std::endl;
+}
+
+AMateria::AMateria(const AMateria& src)
+	: _type(src.getType()) {
+	std::cout << GREEN << "AMateria Copy" << NORMAL
 		<< " Constructor" << std::endl;
 }
 
 AMateria::~AMateria(void) {
-	std::cout << GREEN << "AMatreia" << NORMAL
+	std::cout << GREEN << "AMateria" << NORMAL
 		<< " Destructor" << std::endl;
 }
 

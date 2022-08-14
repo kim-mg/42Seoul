@@ -1,6 +1,7 @@
 #ifndef ICE_HPP
 #define ICE_HPP
 
+#include <iostream>
 #include <string>
 
 #include "AMateria.hpp"
@@ -12,10 +13,11 @@ public:
 	Ice(void);
 	Ice(const std::string& type);
 	Ice(const Ice& src);
-	Ice& operator=(const Ice& src);
 	virtual ~Ice(void);
 
-	virtual Ice* clone(void) const;
+	// Ice& operator=(const Ice& src);
+
+	Ice* clone(void) const;
 	virtual void use(ICharacter& target);
 };
 
