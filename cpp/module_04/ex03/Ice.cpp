@@ -25,13 +25,13 @@ Ice::~Ice(void) {
 		<< " Destructor" << std::endl;
 }
 
-// Ice& Ice::operator=(const Ice& src) {
-// 	std::cout << GREEN << "Ice Assignment Operator" << NORMAL
-// 		<< " Constructor" << std::endl;
-// 	if (this != &src)
-// 		_type = src.getType();
-// 	return *this;
-// }
+Ice& Ice::operator=(const Ice& src) {
+	std::cout << GREEN << "Ice Assignment Operator" << NORMAL
+		<< " Constructor" << std::endl;
+	if (this != &src)
+		_type = src.getType();
+	return *this;
+}
 
 Ice* Ice::clone(void) const {
 	return new Ice();

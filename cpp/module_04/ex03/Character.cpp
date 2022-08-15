@@ -1,15 +1,19 @@
-// #include "AMateria.hpp"
-#include "Character.cpp"
+#include "AMateria.hpp"
+#include "Character.hpp"
 
 Character::Character(void)
 	: _name() {
+	for (int i = 0; i < AM_SIZE; ++i)
+		_materia[i] = NULL;
 	std::cout << MAGENTA << "Character Default" << NORMAL
 		<< " Constructor" << std::endl;
 }
 
 Character::Character(const std::string& name)
 	: _name(name) {
-	std::cout << MAGENTA << "Character Naming" << NORMAL
+	for (int i = 0; i < AM_SIZE; ++i)
+		_materia[i] = NULL;
+	std::cout << MAGENTA << _name << YELLOW << " Character Naming" << NORMAL
 		<< " Constructor" << std::endl;
 }
 
@@ -20,9 +24,9 @@ Character::Character(const Character& src)
 			delete _materia[i];
 			_materia[i] = NULL;
 		}
-		_materia[i] = src.getAMateria(i);
+		_materia[i] = src.getAMateria(i)->clone();
 	}
-	std::cout << MAGENTA << "Character Copy" << NORMAL
+	std::cout << MAGENTA << _name << YELLOW << " Character Copy" << NORMAL
 		<< " Constructor" << std::endl;
 }
 
@@ -33,12 +37,13 @@ Character::~Character(void) {
 			_materia[i] = NULL;
 		}
 	}
-	std::cout << MAGENTA << "Character" << NORMAL
+	std::cout << MAGENTA << _name << YELLOW << " Character" << NORMAL
 		<< " Destructor" << std::endl;
 }
 
 Character& Character::operator=(const Character& src) {
-	std::cout << MAGENTA << "Character Assignment Operator" << NORMAL
+	std::cout << MAGENTA << src.getName()
+		<< YELLOW << "Character Assignment Operator" << NORMAL
 		<< " Constructor" << std::endl;
 	if (this != &src) {
 		_name = src.getName();
@@ -47,7 +52,7 @@ Character& Character::operator=(const Character& src) {
 				delete _materia[i];
 				_materia[i] = NULL;
 			}
-			_materia[i] = src.getAMateria(i);
+			_materia[i] = src.getAMateria(i)->clone();
 		}
 	}
 	return *this;
@@ -62,11 +67,18 @@ const std::string& Character::getName(void) const {
 }
 
 void Character::equip(AMateria* m) {
+	if (!m) {
+		std::cout << MAGENTA << _name << NORMAL
+			<< " Equip Fail : No Materia" << std::endl;
+		return ;
+	}
 	for (int i = 0; i < AM_SIZE; ++i) {
 		if (!_materia[i]) {
 			_materia[i] = m;
 			std::cout << MAGENTA << _name << NORMAL
-				<< " Equip Materia Inventory "
+				<< " Equip Materia TYPE : "
+				<< BLUE << m->getType() << NORMAL
+				<< " Inventory "
 				<< GREEN << i << NORMAL << std::endl;
 			return ;
 		}
@@ -76,11 +88,16 @@ void Character::equip(AMateria* m) {
 }
 
 void Character::unequip(int idx) {
+	std::string type;
+
 	if (0 <= idx && idx < AM_SIZE && _materia[idx]) {
+		type = _materia[idx]->getType();
 		_materia[idx] = NULL;
 		std::cout << MAGENTA << _name << NORMAL
-			<< " Unequip Materia Inventory "
-			<< GREEN << NORMAL << std::endl;
+			<< " Unequip Materia TYPE : "
+			<< BLUE << type << NORMAL
+			<< " Inventory "
+			<< GREEN << idx << NORMAL << std::endl;
 		return ;
 	}
 	std::cout << MAGENTA << _name << NORMAL
@@ -90,6 +107,7 @@ void Character::unequip(int idx) {
 
 void Character::use(int idx, ICharacter& target) {
 	if (0 <= idx && idx < AM_SIZE && _materia[idx]) {
+		std::cout << MAGENTA << _name << NORMAL << " ";
 		_materia[idx]->use(target);
 		return ;
 	}

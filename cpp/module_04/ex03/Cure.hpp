@@ -15,10 +15,10 @@ public:
 	Cure(const Cure& src);
 	virtual ~Cure(void);
 
-	// Cure& operator=(const Cure& src);
+	Cure& operator=(const Cure& src);
 
 	Cure* clone(void) const;
-	virtual void use(ICharacter& target);
+	void use(ICharacter& target);
 };
 
 #endif

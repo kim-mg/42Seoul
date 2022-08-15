@@ -13,7 +13,7 @@ OBJS = $(SRCS:%.cpp=%.o)
 
 all : $(NAME)
 
-debug : CFLAGS += -g fsanitize=address
+debug : CFLAGS += -g -fsanitize=address
 debug : all
 
 %.o : %.cpp

@@ -25,13 +25,13 @@ Cure::~Cure(void) {
 		<< " Destructor" << std::endl;
 }
 
-// Cure& Cure::operator=(const Cure& src) {
-// 	std::cout << GREEN << "Cure Assignment Operator" << NORMAL
-// 		<< " Constructor" << std::endl;
-// 	if (this != &src)
-// 		_type = src.getType();
-// 	return *this;
-// }
+Cure& Cure::operator=(const Cure& src) {
+	std::cout << GREEN << "Cure Assignment Operator" << NORMAL
+		<< " Constructor" << std::endl;
+	if (this != &src)
+		_type = src.getType();
+	return *this;
+}
 
 Cure* Cure::clone(void) const {
 	return new Cure();
