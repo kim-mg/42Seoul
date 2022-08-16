@@ -24,7 +24,8 @@ Character::Character(const Character& src)
 			delete _materia[i];
 			_materia[i] = NULL;
 		}
-		_materia[i] = src.getAMateria(i)->clone();
+		if (src.getAMateria(i))
+			_materia[i] = src.getAMateria(i)->clone();
 	}
 	std::cout << MAGENTA << _name << YELLOW << " Character Copy" << NORMAL
 		<< " Constructor" << std::endl;

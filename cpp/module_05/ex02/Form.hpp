@@ -28,7 +28,7 @@ public:
 	const int& getSignGrade(void) const;
 	const int& getExeGrade(void) const;
 
-	void beSigned(const Bureaucrat& b);
+	void beSigned(const Bureaucrat& b) = 0;
 
 	class GradeTooHighException : public std::exception {
 	public:

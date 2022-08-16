@@ -15,7 +15,8 @@ MateriaSource::MateriaSource(const MateriaSource& src) {
 			delete _materia[i];
 			_materia[i] = NULL;
 		}
-		_materia[i] = src.getAMateria(i)->clone();
+		if (src.getAMateria(i))
+			_materia[i] = src.getAMateria(i)->clone();
 	}
 	std::cout << GREEN << "MateriaSource Copy" << NORMAL
 		<< " Constructor" << std::endl;
