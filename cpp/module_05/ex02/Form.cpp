@@ -61,10 +61,21 @@ void Form::beSigned(const Bureaucrat& b) {
 	_signed = true;
 }
 
+void Form::checkGrade(const Bureaucrat& executor) {
+	if (!executor.getSigned())
+		throw FormDoesNotSignedException();
+	if (executor.getGrade() > _exe_grade)
+		throw GradeTooHighException();
+}
+
 const char* Form::GradeTooHighException::what(void) const throw() {
 	return "Form Grade Too High";
 }
 
 const char* Form::GradeTooLowException::what(void) const throw() {
 	return "Form Grade Too Low";
+}
+
+const char* Form::FormDoesNotSignedException::what(void) const throw() {
+	return "Form Does Not Signed";
 }

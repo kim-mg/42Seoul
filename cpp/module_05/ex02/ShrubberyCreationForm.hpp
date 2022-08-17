@@ -1,9 +1,8 @@
 #ifndef SHRUBBERYCREATIONFORM_HPP
 #define SHRUBBERYCREATIONFORM_HPP
 
-#include <iostream>
 #include <string>
-#include <exception>
+#include <fstream>
 
 #include "Form.hpp"
 
@@ -11,14 +10,17 @@
 #define SF_EXE	137
 
 class ShrubberyCreationForm : public Form {
-public:
+private:
 	ShrubberyCreationForm(void);
-	ShrubberyCreationForm(const std::string& name
-		, const int& sign_grade, const int& exe_grade);
+
+public:
+	ShrubberyCreationForm(const std::string& target);
 	ShrubberyCreationForm(const ShrubberyCreationForm& src);
 	~ShrubberyCreationForm(void);
 
 	ShrubberyCreationForm& operator=(const ShrubberyCreationForm& src);
+
+	void execute(const Bureaucrat& executor) const;
 };
 
 #endif
