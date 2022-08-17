@@ -1,55 +1,34 @@
 #include "Bureaucrat.hpp"
 #include "Form.hpp"
+#include "ShrubberyCreationForm.hpp"
+#include "RobotomyRequestForm.hpp"
+#include "PresidentialPardonForm.hpp"
 #include <iostream>
-#include <exception>
 
 int main() {
-	Bureaucrat a("A", 1);
-	Bureaucrat b("B", 150);
-	Bureaucrat c("C", 6);
+	Bureaucrat b[3] = {Bureaucrat("Aim", 1),
+						Bureaucrat("Born", 150),
+						Bureaucrat("Crack", 45)};
+	Form* f[3] = {new ShrubberyCreationForm("Resort"),
+					new RobotomyRequestForm("Plant"),
+					new PresidentialPardonForm("Loffy")};
 
-	Form f1("One", 3, 8);
-	Form f2("Two", 100, 5);
+	std::cout << b[0] << std::endl
+		<< b[1] << std::endl
+		<< b[2] << std::endl;
 	
-	std::cout << a << std::endl
-		<< b << std::endl
-		<< c << std::endl;
-	
-	std::cout << std::endl;
-	std::cout << f1 << std::endl;
+	for (int i = 0; i < 3; ++i) {
+		std::cout << "========== Loop "
+			<< i + 1 << " ==========" << std::endl;
+		for (int j = 0; j < 3; ++j) {
+			b[i].signForm(*(f[j]));
+			b[i].executeForm(*(f[j]));
+			std::cout << std::endl;
+		}
+	}
 
-	a.signForm(f1);
-	a.signForm(f2);	
-	b.signForm(f1);
-	b.signForm(f2);
-	c.signForm(f1);
-	c.signForm(f2);
-
-	std::cout << std::endl;
-	std::cout << f1 << std::endl;
-
-	std::cout << std::endl
-		<< "Make Instance Test" << std::endl;
-	try {
-		Form f3("33", 0, 100);
-	} catch (std::exception& e) {
-		std::cerr << e.what() << std::endl;
-	}
-	try {
-		Form f4("44", 4, 161);
-	} catch (std::exception& e) {
-		std::cerr << e.what() << std::endl;
-	}
-	try {
-		Form f5 = Form("55", 0, 10);
-	} catch (std::exception& e) {
-		std::cerr << e.what() << std::endl;
-	}
-	try {
-		Form f6(Form("66", 160, 10));
-	} catch (std::exception& e) {
-		std::cerr << e.what() << std::endl;
-	}
+	for (int i = 0; i < 3; ++i)
+		delete f[i];
 
 	return 0;
 }
