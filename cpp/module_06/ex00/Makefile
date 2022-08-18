@@ -1,13 +1,9 @@
 CLANG = c++
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 
-NAME = a.out
+NAME = convert
 SRCS = main.cpp \
-		Bureaucrat.cpp \
-		Form.cpp \
-		ShrubberyCreationForm.cpp \
-		RobotomyRequestForm.cpp \
-		PresidentialPardonForm.cpp
+		Convert.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
 
@@ -24,7 +20,6 @@ $(NAME) : $(OBJS)
 
 clean :
 	rm -rf $(OBJS)
-	rm -rf *_shrubbery
 
 fclean : clean
 	rm -rf $(NAME)
