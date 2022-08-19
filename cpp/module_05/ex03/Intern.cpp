@@ -22,24 +22,25 @@ Form* Intern::makeForm(const std::string& form, const std::string& target) {
 	const std::string forms[F_COUNT] = {F_SHRUBBERY,
 										F_ROBOTOMY,
 										F_PRESIDENT};
+	Form* f[F_COUNT] = {new ShrubberyCreationForm(target),
+						new RobotomyRequestForm(target),
+						new PresidentialPardonForm(target)};
+	int match_idx = -1;
+
 	try {
 		for (int i = 0; i < F_COUNT; ++i) {
 			if (forms[i] == form) {
 				std::cout << "Intern creates " << form
 					<< " " << target << std::endl;
-				switch (i) {
-					case 0:
-						return new ShrubberyCreationForm(target);
-						break ;
-					case 1:
-						return new RobotomyRequestForm(target);
-						break ;
-					default:
-						return new PresidentialPardonForm(target);
-						break ;
-				}
+				match_idx = i;
+			}
+			else {
+				delete f[i];
+				f[i] = NULL;
 			}
 		}
+		if (match_idx != -1 && f[match_idx])
+			return f[match_idx];
 		throw NoFormFindException();
 	} catch (std::exception& e) {
 		std::cerr << "Intern failed to create "

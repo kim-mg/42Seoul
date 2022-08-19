@@ -9,6 +9,6 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	Convert c(argv[1]);
-	c.print();
+	c.printAll();
 	return 0;
 }
