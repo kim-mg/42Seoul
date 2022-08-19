@@ -1,13 +1,14 @@
 #include "Convert.hpp"
 
-Convert::Convert(void) : _value() {
+Convert::Convert(void) : _input() {
 }
 
-Convert::Convert(const std::string& value) : _value(value) {
+Convert::Convert(const std::string& input) : _input(input) {
+	_value = std::strtod(input.c_str(), NULL);
 }
 
 Convert::Convert(const Convert& src) {
-	_value = src.getValue();		
+	_input = src.getInput();		
 }
 
 Convert::~Convert(void) {
@@ -15,33 +16,34 @@ Convert::~Convert(void) {
 
 Convert& Convert::operator=(const Convert& src) {
 	if (this != &src)
-		_value = src.getValue();
+		_input = src.getInput();
 	return *this;
 }
 
-const std::string& Convert::getValue(void) const {
-	return _value;
+const std::string& Convert::getInput(void) const {
+	return _input;
 }
 
-const char& Convert::toChar(void) {
-	return std::atoi(_value.c_str());
+// const char& Convert::toChar(void) {
+// 	return std::strtoi(_input.c_str());
+// }
+
+// const int& Convert::toInt(void) {
+// 	return std::strtoi(_input.c_str());
+// }
+
+float Convert::toFloat(void) const {
+	return static_cast<float>(std::strtof(_input.c_str(), NULL));
 }
 
-const int& Convert::toInt(void) {
-	return std::atoi(_value.c_str());
-}
-
-const float& Convert::toFloat(void) {
-	return std::atof(_value.c_str());
-}
-
-const double& Convert::toDouble(void) {
-	return std::atod(_value.c_str());
+double Convert::toDouble(void) const {
+	return static_cast<double>(std::strtod(_input.c_str(), NULL));
 }
 
 void Convert::print(void) const {
-	std::cout << "char: " << toChar() << std::endl
-		<< "int: " << toInt() << std::endl
+	// std::cout << "char: " << toChar() << std::endl
+		// << "int: " << toInt() << std::endl
+	std::cout
 		<< "float: " << toFloat() << std::endl
 		<< "double: " << toDouble() << std::endl;
 }
