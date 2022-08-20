@@ -5,6 +5,8 @@
 #include <ctime>
 
 class Random {
+private:
+	
 public:
 	Random(void);
 	Random(const Random& src);
@@ -12,7 +14,7 @@ public:
 
 	Random& operator=(const Random& src);
 
-	int randNum(const double& min, const double& max) const;
+	static int randNum(const double& min, const double& max);
 };
 
 #endif

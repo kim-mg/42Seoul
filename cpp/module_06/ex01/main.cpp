@@ -1,9 +1,11 @@
+#include <stdint.h>
+
 #include <iostream>
 
 #include "Data.hpp"
 
 int main(void) {
-	Data d(100);
+	Data d(100, "store_str");
 	uintptr_t uint_1;
 	Data* ds;
 

@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -Werror -std=c++98
 NAME = a.out
 SRCS = main.cpp \
 		Random.cpp \
-		# Base.cpp
+		Base.cpp
 
 
 OBJS = $(SRCS:%.cpp=%.o)
