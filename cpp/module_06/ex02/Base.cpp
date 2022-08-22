@@ -1,5 +1,4 @@
 #include "Base.hpp"
-#include "Random.hpp"
 #include "A.hpp"
 #include "B.hpp"
 #include "C.hpp"
@@ -8,9 +7,15 @@ Base::~Base(void) {
 }
 
 Base* generate(void) {
-	int random = Random::randNum(0, 2);
+	static int seed = 0;
+	int random = 0;
 	Base* f[3] = {new A(), new B(), new C()};
 
+	if (!seed) {
+		std::srand(static_cast<unsigned int>(std::time(NULL)));
+		seed = 1;
+	}
+	random = std::rand() % 3;
 	for (int i = 0; i < 3; ++i) {
 		if (i != random) {
 			delete f[i];
@@ -34,15 +39,15 @@ void identify(Base* p) {
 
 void identify(Base& p) {
 	try {
-		dynamic_cast<A&>(p);
+		static_cast<void>(dynamic_cast<A&>(p));
 		std::cout << "A" << std::endl;
 	} catch (std::exception& e) {}
 	try {
-		dynamic_cast<B&>(p);
+		static_cast<void>(dynamic_cast<B&>(p));
 		std::cout << "B" << std::endl;
 	} catch (std::exception& e) {}
 	try {
-		dynamic_cast<C&>(p);
+		static_cast<void>(dynamic_cast<C&>(p));
 		std::cout << "C" << std::endl;
 	} catch (std::exception& e) {}
 }

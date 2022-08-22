@@ -2,10 +2,9 @@
 #define BASE_HPP
 
 #include <stdint.h>
+#include <cstdlib>
 
 #include <iostream>
-
-#include "Random.hpp"
 
 class Base {
 public:

@@ -2,9 +2,7 @@ CLANG = c++
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 NAME = a.out
-SRCS = main.cpp \
-		Base.cpp
-
+SRCS = main.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
 
