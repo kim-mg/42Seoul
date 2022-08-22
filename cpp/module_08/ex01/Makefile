@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 NAME = a.out
 SRCS = main.cpp \
-		span.cpp
+		Span.cpp
 
 OBJS = $(SRCS:%.cpp=%.o)
 
