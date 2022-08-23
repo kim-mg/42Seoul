@@ -1,8 +1,8 @@
+#include "easyfind.hpp"
+
 #include <iostream>
 #include <vector>
 #include <list>
-
-#include "easyfind.hpp"
 
 int main(void) {
 	int arr[5] = {1, 3, 5, 7, 9};

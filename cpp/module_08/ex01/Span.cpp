@@ -1,7 +1,5 @@
 #include "Span.hpp"
 
-#include <algorithm>
-
 const char* Span::FullStorageException::what(void) const throw() {
 	return "Full numbers stored";
 }
@@ -10,13 +8,16 @@ const char* Span::NoNumberStoredException::what(void) const throw() {
 	return "No numbers stored";
 }
 
-Span::Span(void) : _cont(NULL) {
+const char* Span::NotEnoughSpaceException::what(void) const throw() {
+	return "Not enough space in storage";
 }
 
-Span::Span(const unsigned int& N) : _cont(NULL) {
-	// if (N)
-	// 	_cont.reserve(N);
-	static_cast<void>(N);
+Span::Span(void) : _cont() {
+}
+
+Span::Span(const unsigned int& N) : _cont() {
+	if (N)
+		_cont.reserve(N);
 }
 
 Span::Span(const Span& src) : _cont(src._cont) {
@@ -31,7 +32,12 @@ Span& Span::operator=(const Span& src) {
 	return *this;
 }
 
-std::vector<int> Span::getCont(void) const {
+void Span::setSize(const unsigned int& size) {
+	if (size > _cont.capacity())
+		_cont.reserve(size);
+}
+
+const std::vector<int>& Span::getCont(void) const {
 	return _cont;
 }
 
@@ -46,7 +52,7 @@ int Span::shortestSpan(void) const {
 		throw NoNumberStoredException();
 	std::vector<int> copy(_cont);
 	std::sort(copy.begin(), copy.end());
-	int min_span = *(copy.end());
+	int min_span = *(--copy.end());
 	std::vector<int>::iterator ex = copy.begin();
 	for (std::vector<int>::iterator cur = ++(copy.begin());
 		cur != copy.end(); ++cur) {
@@ -61,5 +67,6 @@ int Span::longestSpan(void) const {
 	if (_cont.size() < 2)
 		throw NoNumberStoredException();
 	std::vector<int> copy(_cont);
-	return *(_cont.end()) - *(_cont.begin());
+	std::sort(copy.begin(), copy.end());
+	return *(--copy.end()) - *(copy.begin());
 }
