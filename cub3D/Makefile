@@ -3,14 +3,14 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: myunkim <myunkim@student.42.fr>            +#+  +:+       +#+         #
+#    By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/25 18:57:46 by myunkim           #+#    #+#              #
-#    Updated: 2022/04/25 18:57:55 by myunkim          ###   ########.fr        #
+#    Updated: 2022/08/26 17:01:50 by myunkim          ###   ########seoul.kr   #
 #                                                                              #
 # **************************************************************************** #
 
-CC = gcc
+CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
 OS = $(shell uname)
@@ -31,15 +31,8 @@ DIR = ./
 DIR_LIB = ./lib/
 LFLAGS = -L $(DIR_LIB) -lft -lgnl -lftprintf
 
-NAME = so_long
-SRCS = so_long.c \
-		draw_map.c \
-		error.c \
-		get_comp.c \
-		ingame.c \
-		parse_map.c \
-		read_map.c \
-		set_game.c
+NAME = cub3D
+SRCS = main.c
 
 OBJS = $(SRCS:%.c=$(DIR_OBJS)%.o)
 
