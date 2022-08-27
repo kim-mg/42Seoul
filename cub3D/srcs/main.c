@@ -1,6 +1,61 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "../lib/libft/libft.h"
+#include "../mlx/mlx.h"
+
+enum e_layer_type
+{
+	LT_CEILING,
+	LT_FLOOR
+};
+
+typedef struct s_layer	t_layer;
+
+struct s_layer
+{
+	int	type;
+	int	r;
+	int	g;
+	int	b;
+	t_layer	*next;
+};
+
+typedef struct s_img
+{
+	void	*ptr;
+	int		*data;
+	int		w;
+	int		h;
+}			t_img;
+
+typedef struct s_texture
+{
+	t_img	n_wall;
+	t_img	s_wall;
+	t_img	w_wall;
+	t_img	e_wall;
+}t_texture;
+
+typedef struct s_map
+{
+	t_layer		*layer_head;
+}t_map;
+
+typedef struct s_player
+{
+	int	x;
+	int	y;
+}t_player;
+
+typedef struct s_game
+{
+	void		*mlx;
+	void		*win;
+	t_texture	texture;
+	t_map		map;
+	t_player	player;
+}t_game;
+
 
 // ====================================================================================
 // error.c
@@ -84,26 +139,30 @@ t_element	*new_elem(t_element *head, char *ident, char *cont, t_parse_section se
 	if (!new)
 		return (NULL);
 	new->sect = sect;
-	new->ident = ft_strdup(ident);
-	new->content = ft_strdup(cont);
-	new->head = head;
+	new->ident = ident;
+	new->content = cont;
+	if (head)
+		new->head = head;
+	else
+		new->head = NULL;
+	new->next = NULL;
 	return (new);
 }
 
-void	add_elem(t_element *e_head, char **split, t_parse_section sect)
+void	add_elem(t_element **e_head, char **split, t_parse_section sect)
 {
 	t_element	*temp;
 
-	if (e_head == NULL)
+	if (!(*e_head))
 	{
-		e_head = new_elem(NULL, split[0], split[1], sect);
-		e_head->head = e_head;
+		*e_head = new_elem(NULL, split[0], split[1], sect);
+		(*e_head)->head = *e_head;
 		return ;
 	}
-	temp = e_head;
+	temp = *e_head;
 	while (temp->next)
 		temp = temp->next;
-	temp->next = new_elem(e_head, split[0], split[1], sect);
+	temp->next = new_elem(*e_head, split[0], split[1], sect);
 }
 
 int	get_elem(t_parser *parser, char *line)
@@ -116,23 +175,23 @@ int	get_elem(t_parser *parser, char *line)
 	if (!split)
 		return (1);
 	if (!ft_strncmp(split[0], "NO", ft_strlen(split[0]) + 1))
-		add_elem(parser->elem_head, split, PS_TEXTURE);
+		add_elem(&parser->elem_head, split, PS_TEXTURE);
 	else if (!ft_strncmp(split[0], "SO", ft_strlen(split[0]) + 1))
-		add_elem(parser->elem_head, split, PS_TEXTURE);
+		add_elem(&parser->elem_head, split, PS_TEXTURE);
 	else if (!ft_strncmp(split[0], "WE", ft_strlen(split[0]) + 1))
-		add_elem(parser->elem_head, split, PS_TEXTURE);
+		add_elem(&parser->elem_head, split, PS_TEXTURE);
 	else if (!ft_strncmp(split[0], "EA", ft_strlen(split[0]) + 1))
-		add_elem(parser->elem_head, split, PS_TEXTURE);
+		add_elem(&parser->elem_head, split, PS_TEXTURE);
 	else if (!ft_strncmp(split[0], "F", ft_strlen(split[0]) + 1))
-		add_elem(parser->elem_head, split, PS_LAYER);
+		add_elem(&parser->elem_head, split, PS_LAYER);
 	else if (!ft_strncmp(split[0], "C", ft_strlen(split[0]) + 1))
-		add_elem(parser->elem_head, split, PS_LAYER);
+		add_elem(&parser->elem_head, split, PS_LAYER);
 	else
 	{
 		free_split(split);
 		return (1);
 	}
-	free_split(split);
+	free(split);
 	return (0);
 }
 
@@ -221,11 +280,15 @@ void	get_map(t_parser *parser, char *line)
 	parser->map.height++;
 }
 
-int	parsing(char *cub)
+int	set_game(t_game *game, t_parser *parser)
+{
+	return (0);
+}
+
+int	parsing(char *cub, t_game *game)
 {
 	t_parser	parser;
 
-	// (void)game;
 	parser_init(&parser);
 	parser.fd = open(cub, O_RDONLY);
 	if (parser.fd < 0)
@@ -237,71 +300,18 @@ int	parsing(char *cub)
 		if (parser.sect == PS_NOTMAP)
 			if (get_elem(&parser, parser.line))
 				parse_error_exit(&parser, "not enough elements");
-		// if (parser.sect == PS_MAP)
-			// get_map(&parser, parser.line);
+		if (parser.sect == PS_MAP)
+			get_map(&parser, parser.line);
 		free(parser.line);
 	}
+	if (set_game(game, &parser))
+		// game_error_exit(game);
 	free_parser(&parser);
 	return (0);
 }
 
 // ====================================================================================
 // main.c
-#include "../mlx/mlx.h"
-
-enum e_layer_type
-{
-	LT_CEILING,
-	LT_FLOOR
-};
-
-typedef struct s_layer	t_layer;
-
-struct s_layer
-{
-	int	type;
-	int	r;
-	int	g;
-	int	b;
-	t_layer	*next;
-};
-
-typedef struct s_img
-{
-	void	*ptr;
-	int		*data;
-	int		w;
-	int		h;
-}			t_img;
-
-typedef struct s_texture
-{
-	t_img	n_wall;
-	t_img	s_wall;
-	t_img	w_wall;
-	t_img	e_wall;
-}t_texture;
-
-typedef struct s_map
-{
-	t_layer		*layer_head;
-}t_map;
-
-typedef struct s_player
-{
-	int	x;
-	int	y;
-}t_player;
-
-typedef struct s_game
-{
-	void		*mlx;
-	void		*win;
-	t_texture	texture;
-	t_map		map;
-	t_player	player;
-}t_game;
-
 void	init_game(t_game *game)
 {
 	(void)game;
