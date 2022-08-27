@@ -6,11 +6,11 @@
 #    By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/25 18:57:46 by myunkim           #+#    #+#              #
-#    Updated: 2022/08/26 17:01:50 by myunkim          ###   ########seoul.kr   #
+#    Updated: 2022/08/27 16:24:34 by myunkim          ###   ########seoul.kr   #
 #                                                                              #
 # **************************************************************************** #
 
-CC = cc
+CC = gcc
 CFLAGS = -Wall -Wextra -Werror
 
 OS = $(shell uname)
@@ -37,6 +37,9 @@ SRCS = main.c
 OBJS = $(SRCS:%.c=$(DIR_OBJS)%.o)
 
 all : $(NAME)
+
+debug += CC CFLAGS -g3 fsanitize=address
+debug : all
 
 $(DIR_OBJS) :
 	@$(MAKE) -C $(DIR_LIB) MAKEFLAGS=
