@@ -349,31 +349,20 @@ void	set_texture(t_parser *parser, t_game *game)
 	game->texture.e_wall = xpm_to_img(game, find_elem(parser->elem_head, ID_EAST)->content, parser);
 }
 
+int	create_trgb(int t, int r, int g, int b)
+{
+	return (t << 24 | r << 16 | g << 8 | b);
+}
+
 int	convert_rgb(char *data)
 {
 	int		rtn;
-	int		idx;
-	int		temp[3];
 	char	**rgb;
 
 	rtn = 0;
 	rgb = ft_split(data, ',');
-	idx = 0;
-	while (rgb[idx])
-	{
-		temp[idx] = ft_atoi(rgb[idx]);
-		while (temp[idx])
-		{
-			rtn *= 16;
-			if (temp[idx] / 16)
-				rtn += temp[idx] / 16;
-			else
-				rtn += temp[idx] % 16;
-			temp[idx] /= 16;
-		}
-		idx++;
-	}
-	ft_printf("color : %d", rtn);
+	rtn = create_trgb(0, ft_atoi(rgb[0]), ft_atoi(rgb[1]), ft_atoi(rgb[2]));
+	free_split(rgb);
 	return (rtn);
 }
 
@@ -382,25 +371,22 @@ void	set_layer(t_parser *parser, t_game *game)
 	if (valid_elem(parser, PS_LAYER))
 		game_error_exit(game, parser, "texture element unsatisfied");
 	game->map.ceiling.color = convert_rgb(find_elem(parser->elem_head, ID_CEILING)->content);
-	game->map.floor.color = 0;
+	game->map.floor.color = convert_rgb(find_elem(parser->elem_head, ID_FLOOR)->content);
 }
 
-// void	set_map(t_parser *parser, t_game *game)
-// {
-// 	// valid_map
-// 	//
-// }
+int	valid_map(t_parser *parser)
+{
+	// walled
+	// component
+}
 
-// void	data_to_map(t_parser *parser, t_game *game)
-// {
-// 	(void)game;
-// 	(void)parser;
-// 	// set_texture
-// 	// set_layer
-// 	// set_map
-// }
+void	set_map(t_parser *parser, t_game *game)
+{
+	// valid_map
+	//
+}
 
-void	parse_cub(char *cub, t_parser *parser)
+void	parse_cub(t_parser *parser, char *cub)
 {
 	parser_init(parser);
 	parser->fd = open(cub, O_RDONLY);
@@ -454,7 +440,7 @@ void	set_game(t_game *game, char *data)
 	t_parser	parser;
 
 	init_game(game);
-	parse_cub(data, &parser);
+	parse_cub(&parser, data);
 	// set_map(&parser, game);
 	// init_window(game);
 	// set_texture(&parser, game);
