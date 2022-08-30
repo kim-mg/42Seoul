@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/08/30 21:47:47 by myunkim           #+#    #+#             */
+/*   Updated: 2022/08/30 21:48:41 by myunkim          ###   ########seoul.kr  */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdlib.h>
 #include <unistd.h>
 #include "../lib/libft/libft.h"
@@ -30,7 +42,8 @@ typedef struct s_map
 {
 	int		cols;
 	int		rows;
-	char	*coord;
+	char	**coord;
+	char	sight;
 	t_layer	ceiling;
 	t_layer	floor;
 }t_map;
@@ -51,7 +64,7 @@ typedef struct s_game
 }t_game;
 
 
-// ====================================================================================
+// =============================================================================
 // error.c
 
 void	error_exit(char *err)
@@ -65,7 +78,7 @@ void	error_exit(char *err)
 	exit(1);
 }
 
-// ====================================================================================
+// =============================================================================
 // parsing.c
 #include <fcntl.h>
 #include "../lib/get_next_line/get_next_line.h"
@@ -119,19 +132,19 @@ typedef struct s_parser
 	t_map_data	map;
 }t_parser;
 
-void	free_split(char **split)
+void	free_strarr(char **arr)
 {
 	char	**temp;
 
-	temp = split;
+	temp = arr;
 	while (*temp)
 	{
 		free(*temp);
 		*temp = NULL;
 		temp++;
 	}
-	free(split);
-	split = NULL;
+	free(arr);
+	arr = NULL;
 }
 
 t_element	*new_elem(t_element *head, char *cont, t_parse_section sect, t_identity ident)
@@ -143,7 +156,7 @@ t_element	*new_elem(t_element *head, char *cont, t_parse_section sect, t_identit
 		return (NULL);
 	new->sect = sect;
 	new->ident = ident;
-	new->content = cont;
+	new->content = ft_strtrim(cont, "\n");
 	if (head)
 		new->head = head;
 	else
@@ -168,11 +181,39 @@ void	add_elem(t_element **e_head, char *cont, t_parse_section sect, t_identity i
 	temp->next = new_elem(*e_head, cont, sect, ident);
 }
 
+char	**pre_proc_elem(char *line)
+{
+	char	**rtn;
+	char	*temp;
+	int	i;
+
+	rtn = ft_split(line, ' ');
+	i = 0;
+	while (*(rtn + i))
+		i++;
+	if (i < 2 || 5 < i)
+	{
+		free_strarr(rtn);
+		return (NULL);
+	}
+	if (2 < i && i < 5)
+	{
+		i = 2;
+		while (*(rtn + i))
+		{
+			temp = rtn[1];
+			rtn[1] = ft_strjoin(temp, *(rtn + i++));
+			free(temp);
+		}
+	}
+	return (rtn);
+}
+
 int	get_elem(t_parser *parser, char *line)
 {
 	char	**split;
 
-	split = ft_split(line, ' ');
+	split = pre_proc_elem(line);
 	if (!split)
 		return (1);
 	if (!ft_strncmp(split[0], "NO", ft_strlen(split[0]) + 1))
@@ -189,11 +230,11 @@ int	get_elem(t_parser *parser, char *line)
 		add_elem(&parser->elem_head, split[1], PS_LAYER, ID_CEILING);
 	else
 	{
-		free_split(split);
+		free_strarr(split);
 		return (1);
 	}
 	parser->elem_cnt++;
-	free(split);
+	free_strarr(split);
 	return (0);
 }
 
@@ -258,7 +299,7 @@ void	check_section(t_parser *parser)
 	}
 }
 
-void	get_map(t_parser *parser, char *line)
+void	get_map_data(t_parser *parser, char *line)
 {
 	int		len;
 	char	*new;
@@ -273,10 +314,9 @@ void	get_map(t_parser *parser, char *line)
 		parser->map.data = ft_strdup(line);
 	else
 	{
-		new = ft_strjoin(parser->map.data, "\n");
+		new = ft_strjoin(parser->map.data, line);
 		free(parser->map.data);
-		parser->map.data = ft_strjoin(new, line);
-		free(new);
+		parser->map.data = new;
 	}
 	parser->map.height++;
 }
@@ -296,7 +336,7 @@ void	game_error_exit(t_game *game, t_parser *parser, char *err)
 {
 	if (parser)
 		free_parser(parser);
-	if (game->map.coord)
+	if (game && game->map.coord)
 	{
 		free(game->map.coord);
 		game->map.coord = NULL;
@@ -362,7 +402,7 @@ int	convert_rgb(char *data)
 	rtn = 0;
 	rgb = ft_split(data, ',');
 	rtn = create_trgb(0, ft_atoi(rgb[0]), ft_atoi(rgb[1]), ft_atoi(rgb[2]));
-	free_split(rgb);
+	free_strarr(rgb);
 	return (rtn);
 }
 
@@ -374,15 +414,116 @@ void	set_layer(t_parser *parser, t_game *game)
 	game->map.floor.color = convert_rgb(find_elem(parser->elem_head, ID_FLOOR)->content);
 }
 
-int	valid_map(t_parser *parser)
+int	is_map_closed(t_map *map)
 {
-	// walled
-	// component
+	int	i;
+	int	j;
+
+	i = -1;
+	while (map->coord[++i])
+	{
+		j = -1;
+		while (map->coord[i][++j])
+		{
+			if ((i == 0 || j == 0 || i == map->rows - 1 || j == map->cols - 1)
+				&& map->coord[i][j] == '0')
+				return (1);
+			if (i != 0 && j != 0 && i != map->rows - 1 && j != map->cols - 1 && map->coord[i][j] == ' ')
+				if (map->coord[i][j - 1] == '0' || map->coord[i - 1][j] == '0'
+					|| map->coord[i][j + 1] == '0' || map->coord[i + 1][j] == '0')
+					return (1);
+		}
+	}
+	return (0);
+}
+
+int	check_map_component(t_map *map)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	while (map->coord[++i])
+	{
+		j = -1;
+		while (map->coord[i][++j])
+		{
+			if (!ft_strchr(" 01NSWE", map->coord[i][j]))
+				return (1);
+			if ((i == 0 || j == 0 || i == map->rows - 1 || j == map->cols - 1)
+				&& ft_strchr("NSWE", map->coord[i][j]))
+				return (1);
+			if (i != 0 && j != 0 && i != map->rows - 1 && j != map->cols - 1
+				&& ft_strchr("NSWE", map->coord[i][j]))
+				if (map->coord[i][j - 1] == ' ' || map->coord[i - 1][j] == ' '
+					|| map->coord[i][j + 1] == ' ' || map->coord[i + 1][j] == ' ')
+					return (1);
+			if (ft_strchr("NSWE", map->coord[i][j]))
+				map->sight = *ft_strchr("NSWE", map->coord[i][j]);
+		}
+	}
+	return (0);
+}
+
+int	valid_map(t_map *map)
+{
+	if (is_map_closed(map))
+		return (1);
+	if (check_map_component(map))
+		return (1);
+	return (0);
+}
+
+void	copy_map(char *map, char *data, int len)
+{
+	int	i;
+
+	i = -1;
+	while (data[++i])
+		map[i] = data[i];
+	while (i < len)
+		map[i++] = ' ';
+	map[i] = '\0';
+}
+
+char	**mapping(t_map_data *map)
+{
+	char	**rtn;
+	char	**data;
+	int		h;
+
+	rtn = (char **)ft_calloc(sizeof(char *), map->height + 1);
+	if (!map)
+		return (NULL);
+	h = 0;
+	data = ft_split(map->data, '\n');
+	while (h < map->height)
+	{
+		rtn[h] = (char *)malloc(sizeof(char) * (map->width + 1));
+		if (!rtn[h])
+		{
+			free_strarr(rtn);
+			return (NULL);
+		}
+		copy_map(rtn[h], data[h], map->width - 1);
+		h++;
+	}
+	return (rtn);
 }
 
 void	set_map(t_parser *parser, t_game *game)
 {
+	(void)parser;
+	(void)game;
+	
+	game->map.rows = parser->map.height;
+	game->map.cols = parser->map.width;
+	game->map.coord = mapping(&parser->map);
+	if (!game->map.coord)
+		game_error_exit(game, parser, "map malloc fail");
 	// valid_map
+	if (valid_map(&game->map))
+		game_error_exit(game, parser, "invalid map rules");
 	//
 }
 
@@ -400,7 +541,7 @@ void	parse_cub(t_parser *parser, char *cub)
 			if (get_elem(parser, parser->line))
 				parse_error_exit(parser, "illegal element");
 		if (parser->sect == PS_MAP)
-			get_map(parser, parser->line);
+			get_map_data(parser, parser->line);
 		free(parser->line);
 	}
 }
@@ -413,6 +554,7 @@ void	init_game(t_game *game)
 	game->map.cols = 0;
 	game->map.rows = 0;
 	game->map.coord = NULL;
+	game->map.sight = 0;
 	game->map.ceiling.color = 0;
 	game->map.floor.color = 0;
 	// player
@@ -441,7 +583,7 @@ void	set_game(t_game *game, char *data)
 
 	init_game(game);
 	parse_cub(&parser, data);
-	// set_map(&parser, game);
+	set_map(&parser, game);
 	// init_window(game);
 	// set_texture(&parser, game);
 	set_layer(&parser, game);
