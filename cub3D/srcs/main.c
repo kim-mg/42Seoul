@@ -1,21 +1,9 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/08/30 21:47:47 by myunkim           #+#    #+#             */
-/*   Updated: 2022/08/30 21:48:41 by myunkim          ###   ########seoul.kr  */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <stdlib.h>
 #include <unistd.h>
 #include "../lib/libft/libft.h"
 #include "../mlx/mlx.h"
 
-#define TILE_SIZE	50
+#define TILE_SIZE	64
 
 typedef struct s_layer
 {
@@ -414,63 +402,58 @@ void	set_layer(t_parser *parser, t_game *game)
 	game->map.floor.color = convert_rgb(find_elem(parser->elem_head, ID_FLOOR)->content);
 }
 
-int	is_map_closed(t_map *map)
+int	valid_wall(t_map *map, int i, int j)
 {
-	int	i;
-	int	j;
-
-	i = -1;
-	while (map->coord[++i])
-	{
-		j = -1;
-		while (map->coord[i][++j])
-		{
-			if ((i == 0 || j == 0 || i == map->rows - 1 || j == map->cols - 1)
-				&& map->coord[i][j] == '0')
-				return (1);
-			if (i != 0 && j != 0 && i != map->rows - 1 && j != map->cols - 1 && map->coord[i][j] == ' ')
-				if (map->coord[i][j - 1] == '0' || map->coord[i - 1][j] == '0'
-					|| map->coord[i][j + 1] == '0' || map->coord[i + 1][j] == '0')
-					return (1);
-		}
-	}
+	if ((i == 0 || j == 0 || i == map->rows - 1 || j == map->cols - 1)
+		&& map->coord[i][j] == '0')
+		return (1);
+	if (i != 0 && j != 0 && i != map->rows - 1
+		&& j != map->cols - 1&& map->coord[i][j] == ' ')
+		if (map->coord[i][j - 1] == '0' || map->coord[i - 1][j] == '0'
+			|| map->coord[i][j + 1] == '0' || map->coord[i + 1][j] == '0')
+			return (1);
 	return (0);
 }
 
-int	check_map_component(t_map *map)
+int	valid_compo(t_map *map, int i, int j)
 {
-	int	i;
-	int	j;
+	char	*chr;
 
-	i = -1;
-	while (map->coord[++i])
-	{
-		j = -1;
-		while (map->coord[i][++j])
-		{
-			if (!ft_strchr(" 01NSWE", map->coord[i][j]))
-				return (1);
-			if ((i == 0 || j == 0 || i == map->rows - 1 || j == map->cols - 1)
-				&& ft_strchr("NSWE", map->coord[i][j]))
-				return (1);
-			if (i != 0 && j != 0 && i != map->rows - 1 && j != map->cols - 1
-				&& ft_strchr("NSWE", map->coord[i][j]))
-				if (map->coord[i][j - 1] == ' ' || map->coord[i - 1][j] == ' '
-					|| map->coord[i][j + 1] == ' ' || map->coord[i + 1][j] == ' ')
-					return (1);
-			if (ft_strchr("NSWE", map->coord[i][j]))
-				map->sight = *ft_strchr("NSWE", map->coord[i][j]);
-		}
-	}
+	chr = ft_strchr("NSWE", map->coord[i][j]);
+	if (map->sight && chr)
+		return (1);
+	if (!ft_strchr(" 01NSWE", map->coord[i][j]))
+		return (1);
+	if ((i == 0 || j == 0 || i == map->rows - 1 || j == map->cols - 1)
+		&& chr)
+		return (1);
+	if (i != 0 && j != 0 && i != map->rows - 1 && j != map->cols - 1
+		&& chr)
+		if (map->coord[i][j - 1] == ' ' || map->coord[i - 1][j] == ' '
+			|| map->coord[i][j + 1] == ' ' || map->coord[i + 1][j] == ' ')
+			return (1);
+	if (chr && map->sight == 0)
+		map->sight = *ft_strchr("NSWE", map->coord[i][j]);
 	return (0);
 }
 
 int	valid_map(t_map *map)
 {
-	if (is_map_closed(map))
-		return (1);
-	if (check_map_component(map))
-		return (1);
+	int	i;
+	int	j;
+
+	i = -1;
+	while (map->coord[++i])
+	{
+		j = -1;
+		while (map->coord[i][++j])
+		{
+			if (valid_wall(map, i, j))
+				return (1);
+			if (valid_compo(map, i, j))
+				return (1);
+		}
+	}
 	return (0);
 }
 
@@ -513,18 +496,16 @@ char	**mapping(t_map_data *map)
 
 void	set_map(t_parser *parser, t_game *game)
 {
-	(void)parser;
-	(void)game;
-	
+	char	*err;
+
+	err = NULL;
 	game->map.rows = parser->map.height;
 	game->map.cols = parser->map.width;
 	game->map.coord = mapping(&parser->map);
 	if (!game->map.coord)
 		game_error_exit(game, parser, "map malloc fail");
-	// valid_map
 	if (valid_map(&game->map))
-		game_error_exit(game, parser, "invalid map rules");
-	//
+		game_error_exit(game, parser, "invalid map configuration");
 }
 
 void	parse_cub(t_parser *parser, char *cub)
@@ -548,6 +529,15 @@ void	parse_cub(t_parser *parser, char *cub)
 
 // ====================================================================================
 // main.c
+enum e_key_setting
+{
+	KEY_ESC = 53,
+	KEY_W = 13,
+	KEY_A = 0,
+	KEY_S = 1,
+	KEY_D = 2,
+};
+
 void	init_game(t_game *game)
 {
 	// map
@@ -562,7 +552,7 @@ void	init_game(t_game *game)
 	game->player.y = 0;
 }
 
-void	init_window(t_game *game)
+void	set_window(t_game *game)
 {
 	int	width;
 	int	height;
@@ -584,21 +574,34 @@ void	set_game(t_game *game, char *data)
 	init_game(game);
 	parse_cub(&parser, data);
 	set_map(&parser, game);
-	// init_window(game);
-	// set_texture(&parser, game);
+	set_window(game);
+	set_texture(&parser, game);
 	set_layer(&parser, game);
 	free_parser(&parser);
+}
+
+void	valid_extension(const char *cub)
+{
+	char	*temp;
+
+	temp = ft_strnstr(cub, ".cub", ft_strlen(cub));
+	if (!temp || (temp && ft_strncmp(temp, ".cub", ft_strlen(temp) + 1)))
+		error_exit("invalid extension");
 }
 
 int	main(int argc, char *argv[])
 {
 	t_game	game;
 
+	// 0. 매개변수 확인
 	if (--argc != 1)
 		error_exit("usage : ./cub3D 'map_name.cub'");
-	// 1. 게임 세팅;
+	else
+		valid_extension(argv[argc]);
+	// 1. 게임 세팅
 	set_game(&game, argv[argc]);
 	// 2. 게임 실행
 	// execute_game(&game);
+	// mlx_loop(game.mlx);
 	return (0);
 }
