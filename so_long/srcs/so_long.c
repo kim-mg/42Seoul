@@ -6,11 +6,12 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 22:45:25 by myunkim           #+#    #+#             */
-/*   Updated: 2022/04/23 03:10:50 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/09/01 21:30:05 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../mlx/mlx.h"
+// #include "../mlx/mlx.h"
+#include "../minilibx-linux/mlx.h"
 #include "../lib/libft/libft.h"
 #include "../lib/get_next_line/get_next_line.h"
 #include "../includes/error.h"

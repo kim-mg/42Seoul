@@ -6,11 +6,11 @@
 #    By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/20 20:44:31 by myunkim           #+#    #+#              #
-#    Updated: 2022/04/25 18:03:09 by myunkim          ###   ########seoul.kr   #
+#    Updated: 2022/09/01 21:07:09 by myunkim          ###   ########seoul.kr   #
 #                                                                              #
 # **************************************************************************** #
 
-CC = gcc
+CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
 DIR_OBJS = ./objs/

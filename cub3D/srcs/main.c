@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "../lib/libft/libft.h"
-#include "../mlx/mlx.h"
+// #include "../mlx/mlx.h"
+#include "../minilibx-linux/mlx.h"
 
 #define TILE_SIZE	64
 
@@ -231,6 +232,8 @@ void	free_parser(t_parser *parser)
 	t_element	*temp;
 	t_element	*next;
 
+	if (!parser)
+		return ;
 	temp = parser->elem_head;
 	while (temp)
 	{
@@ -320,15 +323,34 @@ t_element	*find_elem(t_element *head, t_identity ident)
 	return (NULL);
 }
 
-void	game_error_exit(t_game *game, t_parser *parser, char *err)
+void	free_game(t_game *game)
 {
-	if (parser)
-		free_parser(parser);
-	if (game && game->map.coord)
+	char	**temp;
+
+	temp = game->map.coord;
+	if (game->map.coord)
 	{
+		while (*temp)
+		{
+			free(*temp);
+			*temp = NULL;
+			temp++;
+		}
 		free(game->map.coord);
 		game->map.coord = NULL;
 	}
+	mlx_destroy_image(game->mlx, game->texture.n_wall.ptr);
+	mlx_destroy_image(game->mlx, game->texture.s_wall.ptr);
+	mlx_destroy_image(game->mlx, game->texture.w_wall.ptr);
+	mlx_destroy_image(game->mlx, game->texture.e_wall.ptr);
+	mlx_destroy_window(game->mlx, game->win);
+	free(game->mlx);
+}
+
+void	game_error_exit(t_game *game, t_parser *parser, char *err)
+{
+	free_parser(parser);
+	free_game(game);
 	error_exit(err);
 }
 
@@ -461,6 +483,8 @@ void	copy_map(char *map, char *data, int len)
 {
 	int	i;
 
+	if (!data)
+		return ;
 	i = -1;
 	while (data[++i])
 		map[i] = data[i];
@@ -478,27 +502,24 @@ char	**mapping(t_map_data *map)
 	rtn = (char **)ft_calloc(sizeof(char *), map->height + 1);
 	if (!map)
 		return (NULL);
-	h = 0;
+	h = -1;
 	data = ft_split(map->data, '\n');
-	while (h < map->height)
+	while (++h < map->height)
 	{
 		rtn[h] = (char *)malloc(sizeof(char) * (map->width + 1));
-		if (!rtn[h])
+		if (!rtn[h] || !data)
 		{
 			free_strarr(rtn);
 			return (NULL);
 		}
 		copy_map(rtn[h], data[h], map->width - 1);
-		h++;
 	}
+	free_strarr(data);
 	return (rtn);
 }
 
 void	set_map(t_parser *parser, t_game *game)
 {
-	char	*err;
-
-	err = NULL;
 	game->map.rows = parser->map.height;
 	game->map.cols = parser->map.width;
 	game->map.coord = mapping(&parser->map);
@@ -552,19 +573,20 @@ void	init_game(t_game *game)
 	game->player.y = 0;
 }
 
-void	set_window(t_game *game)
+int	set_window(t_game *game)
 {
 	int	width;
 	int	height;
 
 	game->mlx = mlx_init();
 	if (!game->mlx)
-		error_exit("init error : mlx init failed.");
+		return (1);
 	width = game->map.cols * TILE_SIZE;
 	height = game->map.rows * TILE_SIZE;
 	game->win = mlx_new_window(game->mlx, width, height, "so_long");
 	if (!game->win)
-		error_exit("init error : window init failed.");
+		return (1);
+	return (0);
 }
 
 void	set_game(t_game *game, char *data)
@@ -574,7 +596,8 @@ void	set_game(t_game *game, char *data)
 	init_game(game);
 	parse_cub(&parser, data);
 	set_map(&parser, game);
-	set_window(game);
+	if (set_window(game))
+		game_error_exit(game, &parser, "mlx or window init failed");
 	set_texture(&parser, game);
 	set_layer(&parser, game);
 	free_parser(&parser);
@@ -603,5 +626,6 @@ int	main(int argc, char *argv[])
 	// 2. 게임 실행
 	// execute_game(&game);
 	// mlx_loop(game.mlx);
+	free_game(&game);
 	return (0);
 }
