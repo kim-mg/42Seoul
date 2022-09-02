@@ -6,7 +6,7 @@
 #    By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/25 18:57:46 by myunkim           #+#    #+#              #
-#    Updated: 2022/09/01 21:07:24 by myunkim          ###   ########seoul.kr   #
+#    Updated: 2022/09/02 19:39:25 by myunkim          ###   ########seoul.kr   #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,7 @@ OBJS = $(SRCS:%.c=$(DIR_OBJS)%.o)
 
 all : $(NAME)
 
-debug += CC CFLAGS -g3 fsanitize=address
+debug += CC CFLAGS -g fsanitize=address
 debug : all
 
 $(DIR_OBJS) :

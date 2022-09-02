@@ -1,10 +1,16 @@
+#include <math.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include "../lib/libft/libft.h"
-// #include "../mlx/mlx.h"
-#include "../minilibx-linux/mlx.h"
+#include "../mlx/mlx.h"
+// #include "../minilibx-linux/mlx.h"
+
+#define X_EVENT_KEY_PRESS	2
+#define X_EVENT_DESTROY_NOTIFY	17
 
 #define TILE_SIZE	64
+
+# define TO_COORD(X, Y, W) ((int)floor(Y) * W + (int)floor(X))
 
 typedef struct s_layer
 {
@@ -17,6 +23,10 @@ typedef struct s_img
 	int		*data;
 	int		w;
 	int		h;
+
+	int		size_l;
+	int		bpp;
+	int		endian;
 }			t_img;
 
 typedef struct s_texture
@@ -31,6 +41,8 @@ typedef struct s_map
 {
 	int		cols;
 	int		rows;
+	int		width;
+	int		height;
 	char	**coord;
 	char	sight;
 	t_layer	ceiling;
@@ -39,8 +51,8 @@ typedef struct s_map
 
 typedef struct s_player
 {
-	int	x;
-	int	y;
+	double	x;
+	double	y;
 }t_player;
 
 typedef struct s_game
@@ -50,6 +62,8 @@ typedef struct s_game
 	t_texture	texture;
 	t_map		map;
 	t_player	player;
+	
+	t_img		img;
 }t_game;
 
 
@@ -296,6 +310,8 @@ void	get_map_data(t_parser *parser, char *line)
 	char	*new;
 
 	len = ft_strlen(line);
+	if (line[len - 1] == '\n')
+		len -= 1;
 	new = NULL;
 	if (*line == '\n')
 		parse_error_exit(parser, "map has empty line");
@@ -312,15 +328,50 @@ void	get_map_data(t_parser *parser, char *line)
 	parser->map.height++;
 }
 
-t_element	*find_elem(t_element *head, t_identity ident)
+
+
+void	parse_cub(t_parser *parser, char *cub)
 {
-	while (head)
+	parser_init(parser);
+	parser->fd = open(cub, O_RDONLY);
+	if (parser->fd < 0)
+		error_exit("cub file not found");
+	while (parser->line && parser->sect != PS_DONE)
 	{
-		if (head->ident == ident)
-			return (head);
-		head = head->next;
+		parser->line = get_next_line(parser->fd);
+		check_section(parser);
+		if (parser->sect == PS_NOTMAP)
+			if (get_elem(parser, parser->line))
+				parse_error_exit(parser, "illegal element");
+		if (parser->sect == PS_MAP)
+			get_map_data(parser, parser->line);
+		free(parser->line);
 	}
-	return (NULL);
+}
+
+// ====================================================================================
+// main.c
+enum e_key_setting
+{
+	KEY_ESC = 53,
+	KEY_W = 13,
+	KEY_A = 0,
+	KEY_S = 1,
+	KEY_D = 2,
+};
+
+void	init_game(t_game *game)
+{
+	// map
+	game->map.cols = 0;
+	game->map.rows = 0;
+	game->map.coord = NULL;
+	game->map.sight = 0;
+	game->map.ceiling.color = 0;
+	game->map.floor.color = 0;
+	// player
+	game->player.x = 0;
+	game->player.y = 0;
 }
 
 void	free_game(t_game *game)
@@ -354,75 +405,6 @@ void	game_error_exit(t_game *game, t_parser *parser, char *err)
 	error_exit(err);
 }
 
-t_img	xpm_to_img(t_game *game, char *file, t_parser *parser)
-{
-	char	*path;
-	t_img	img;
-
-	path = ft_strjoin("./texture/", file);
-	img.ptr = mlx_xpm_file_to_image(game->mlx, path, &img.w, &img.h);
-	free(path);
-	if (!img.ptr)
-		game_error_exit(game, parser, "xpm file not found");
-	return (img);
-}
-
-int valid_elem(t_parser *parser, t_parse_section sect)
-{
-	int	rst;
-	t_element	*temp;
-
-	rst = 0;
-	temp = parser->elem_head;
-	while (temp)
-	{
-		if (temp->sect == sect)
-			rst |= temp->ident;
-		temp = temp->next;
-	}
-	if (sect == PS_TEXTURE)
-		if (rst != (ID_NORTH | ID_SOUTH | ID_WEST | ID_EAST))
-			return (1);
-	if (sect == PS_LAYER)
-		if (rst != (ID_CEILING | ID_FLOOR))
-			return (1);
-	return (0);
-}
-
-void	set_texture(t_parser *parser, t_game *game)
-{
-	if (valid_elem(parser, PS_TEXTURE))
-		game_error_exit(game, parser, "texture element unsatisfied");
-	game->texture.n_wall = xpm_to_img(game, find_elem(parser->elem_head, ID_NORTH)->content, parser);
-	game->texture.s_wall = xpm_to_img(game, find_elem(parser->elem_head, ID_SOUTH)->content, parser);
-	game->texture.w_wall = xpm_to_img(game, find_elem(parser->elem_head, ID_WEST)->content, parser);
-	game->texture.e_wall = xpm_to_img(game, find_elem(parser->elem_head, ID_EAST)->content, parser);
-}
-
-int	create_trgb(int t, int r, int g, int b)
-{
-	return (t << 24 | r << 16 | g << 8 | b);
-}
-
-int	convert_rgb(char *data)
-{
-	int		rtn;
-	char	**rgb;
-
-	rtn = 0;
-	rgb = ft_split(data, ',');
-	rtn = create_trgb(0, ft_atoi(rgb[0]), ft_atoi(rgb[1]), ft_atoi(rgb[2]));
-	free_strarr(rgb);
-	return (rtn);
-}
-
-void	set_layer(t_parser *parser, t_game *game)
-{
-	if (valid_elem(parser, PS_LAYER))
-		game_error_exit(game, parser, "texture element unsatisfied");
-	game->map.ceiling.color = convert_rgb(find_elem(parser->elem_head, ID_CEILING)->content);
-	game->map.floor.color = convert_rgb(find_elem(parser->elem_head, ID_FLOOR)->content);
-}
 
 int	valid_wall(t_map *map, int i, int j)
 {
@@ -522,55 +504,13 @@ void	set_map(t_parser *parser, t_game *game)
 {
 	game->map.rows = parser->map.height;
 	game->map.cols = parser->map.width;
+	game->map.width = parser->map.width * TILE_SIZE;
+	game->map.height = parser->map.height * TILE_SIZE;
 	game->map.coord = mapping(&parser->map);
 	if (!game->map.coord)
 		game_error_exit(game, parser, "map malloc fail");
 	if (valid_map(&game->map))
 		game_error_exit(game, parser, "invalid map configuration");
-}
-
-void	parse_cub(t_parser *parser, char *cub)
-{
-	parser_init(parser);
-	parser->fd = open(cub, O_RDONLY);
-	if (parser->fd < 0)
-		error_exit("cub file not found");
-	while (parser->line && parser->sect != PS_DONE)
-	{
-		parser->line = get_next_line(parser->fd);
-		check_section(parser);
-		if (parser->sect == PS_NOTMAP)
-			if (get_elem(parser, parser->line))
-				parse_error_exit(parser, "illegal element");
-		if (parser->sect == PS_MAP)
-			get_map_data(parser, parser->line);
-		free(parser->line);
-	}
-}
-
-// ====================================================================================
-// main.c
-enum e_key_setting
-{
-	KEY_ESC = 53,
-	KEY_W = 13,
-	KEY_A = 0,
-	KEY_S = 1,
-	KEY_D = 2,
-};
-
-void	init_game(t_game *game)
-{
-	// map
-	game->map.cols = 0;
-	game->map.rows = 0;
-	game->map.coord = NULL;
-	game->map.sight = 0;
-	game->map.ceiling.color = 0;
-	game->map.floor.color = 0;
-	// player
-	game->player.x = 0;
-	game->player.y = 0;
 }
 
 int	set_window(t_game *game)
@@ -583,10 +523,91 @@ int	set_window(t_game *game)
 		return (1);
 	width = game->map.cols * TILE_SIZE;
 	height = game->map.rows * TILE_SIZE;
-	game->win = mlx_new_window(game->mlx, width, height, "so_long");
+	game->win = mlx_new_window(game->mlx, width, height, "cub3D");
 	if (!game->win)
 		return (1);
 	return (0);
+}
+
+t_element	*find_elem(t_element *head, t_identity ident)
+{
+	while (head)
+	{
+		if (head->ident == ident)
+			return (head);
+		head = head->next;
+	}
+	return (NULL);
+}
+
+t_img	xpm_to_img(t_game *game, char *file, t_parser *parser)
+{
+	char	*path;
+	t_img	img;
+
+	path = ft_strjoin("./texture/", file);
+	img.ptr = mlx_xpm_file_to_image(game->mlx, path, &img.w, &img.h);
+	free(path);
+	if (!img.ptr)
+		game_error_exit(game, parser, "xpm file not found");
+	return (img);
+}
+
+int valid_elem(t_parser *parser, t_parse_section sect)
+{
+	int	rst;
+	t_element	*temp;
+
+	rst = 0;
+	temp = parser->elem_head;
+	while (temp)
+	{
+		if (temp->sect == sect)
+			rst |= temp->ident;
+		temp = temp->next;
+	}
+	if (sect == PS_TEXTURE)
+		if (rst != (ID_NORTH | ID_SOUTH | ID_WEST | ID_EAST))
+			return (1);
+	if (sect == PS_LAYER)
+		if (rst != (ID_CEILING | ID_FLOOR))
+			return (1);
+	return (0);
+}
+
+void	set_texture(t_parser *parser, t_game *game)
+{
+	if (valid_elem(parser, PS_TEXTURE))
+		game_error_exit(game, parser, "texture element unsatisfied");
+	game->texture.n_wall = xpm_to_img(game, find_elem(parser->elem_head, ID_NORTH)->content, parser);
+	game->texture.s_wall = xpm_to_img(game, find_elem(parser->elem_head, ID_SOUTH)->content, parser);
+	game->texture.w_wall = xpm_to_img(game, find_elem(parser->elem_head, ID_WEST)->content, parser);
+	game->texture.e_wall = xpm_to_img(game, find_elem(parser->elem_head, ID_EAST)->content, parser);
+}
+
+int	create_trgb(int t, int r, int g, int b)
+{
+	return (t << 24 | r << 16 | g << 8 | b);
+}
+
+int	convert_rgb(char *data)
+{
+	int		rtn;
+	char	**rgb;
+
+	rtn = 0;
+	rgb = ft_split(data, ',');
+	rtn = create_trgb(0, ft_atoi(rgb[0]), ft_atoi(rgb[1]), ft_atoi(rgb[2]));
+	free_strarr(rgb);
+	return (rtn);
+}
+
+void	set_layer(t_parser *parser, t_game *game)
+{
+	if (valid_elem(parser, PS_LAYER))
+		game_error_exit(game, parser, "texture element unsatisfied");
+	game->map.ceiling.color = convert_rgb(find_elem(parser->elem_head, ID_CEILING)->content);
+	game->map.floor.color = convert_rgb(find_elem(parser->elem_head, ID_FLOOR)->content);
 }
 
 void	set_game(t_game *game, char *data)
@@ -612,6 +633,160 @@ void	valid_extension(const char *cub)
 		error_exit("invalid extension");
 }
 
+// void	draw_map(t_game *game)
+// {
+// 	int	i;
+// 	int	j;
+
+// 	i = -1;
+// 	while (++i < game->map.rows)
+// 	{
+// 		j = -1;
+// 		while (++j < game->map.cols)
+// 		{
+
+// 		}
+// 	}
+// }
+
+int	check_coord(double x1, double y1, double x2, double y2)
+{
+	double	deltaX;
+	double	deltaY;
+	double	step;
+
+	deltaX = x2 - x1;
+	deltaY = y2 - y1;
+	step = (fabs(deltaX) > fabs(deltaY) ? fabs(deltaX) : fabs(deltaY));
+	deltaX /= step;
+	deltaY /= step;
+}
+
+void	move(t_game *game, double to_x, double to_y)
+{
+	char	**coord;
+
+	coord = game->map.coord;
+	if (coord[(int)to_x][to_y] != '1')
+	{
+		game->map.coord[(int)floor(game->player.x)][(int)floor(game->player.y)] = '0';
+		game->map.coord[(int)floor(to_x)][(int)floor(to_y)] = 'N';
+		game->player.x = to_x;
+		game->player.y = to_y;
+		// draw_map(game);
+	}
+}
+
+int	deal_key(int key_code, t_game *game)
+{
+	(void)game;
+	if (key_code == KEY_ESC)
+		exit(0);
+	if (key_code == KEY_W)
+		move(game, game->player.x - 0.1, game->player.y);
+	if (key_code == KEY_A)
+		move(game, game->player.x, game->player.y - 0.1);
+	if (key_code == KEY_S)
+		move(game, game->player.x + 0.1, game->player.y);
+	if (key_code == KEY_D)
+		move(game, game->player.x, game->player.y + 0.1);
+	return (0);
+}
+
+int	close_btn_win(t_game *game)
+{
+	mlx_destroy_window(game->mlx, game->win);
+	exit(0);
+}
+
+void	draw_line(t_game *game, double x1, double y1, double x2, double y2)
+{
+	double	deltaX;
+	double	deltaY;
+	double	step;
+
+	deltaX = x2 - x1;
+	deltaY = y2 - y1;
+	step = (fabs(deltaX) > fabs(deltaY) ? fabs(deltaX) : fabs(deltaY));
+	deltaX /= step;
+	deltaY /= step;
+	while (fabs(x2 - x1) > 0.01 || fabs(y2 - y1) > 0.01)
+	{
+		game->img.data[(int)floor(y1) * (game->map.cols * TILE_SIZE) + (int)floor(x1)] = 0xb3b3b3;
+		x1 += deltaX;
+		y1 += deltaY;
+	}
+}
+
+void	draw_lines(t_game *game)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	while (++i < game->map.cols)
+		draw_line(game, i * TILE_SIZE, 0, i * TILE_SIZE, game->map.rows * TILE_SIZE);
+	draw_line(game, game->map.cols * TILE_SIZE - 1, 0, game->map.cols * TILE_SIZE - 1, game->map.rows * TILE_SIZE);
+	j = -1;
+	while (++j < game->map.rows)
+		draw_line(game, 0, j * TILE_SIZE, game->map.cols * TILE_SIZE, j * TILE_SIZE);
+	draw_line(game, 0, game->map.rows * TILE_SIZE - 1, game->map.cols * TILE_SIZE, game->map.rows * TILE_SIZE - 1);
+}
+
+void	draw_rectangle(t_game *game, int x, int y)
+{
+	int	i;
+	int	j;
+
+	x *= TILE_SIZE;
+	y *= TILE_SIZE;
+	i = -1;
+	while (++i < TILE_SIZE)
+	{
+		j = -1;
+		while (++j < TILE_SIZE)
+			game->img.data[(y + i) * (game->map.cols * TILE_SIZE) + x + j] = 0xFFFFFF;
+	}
+}
+
+void	draw_player(t_game *game, int x, int y)
+{
+
+}
+
+void	draw_rectangles(t_game *game)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	while (++i < game->map.rows)
+	{
+		j = -1;
+		while (++j < game->map.cols)
+		{
+			if (game->map.coord[i][j] == '1')
+				draw_rectangle(game, j, i);
+			if (ft_strchr("NSWE", game->map.coord[i][j]))
+				draw_player(game, j, i);
+		}
+	}
+}
+
+int	main_loop(t_game *game)
+{
+	draw_rectangles(game);
+	draw_lines(game);
+	mlx_put_image_to_window(game->mlx, game->win, game->img.ptr, 0, 0);
+	return (0);
+}
+
+void	test_img_init(t_game *game)
+{
+	game->img.ptr = mlx_new_image(game->mlx, game->map.cols * TILE_SIZE, game->map.rows * TILE_SIZE);
+	game->img.data = (int *)mlx_get_data_addr(game->img.ptr, &game->img.bpp, &game->img.size_l, &game->img.endian);
+}
+
 int	main(int argc, char *argv[])
 {
 	t_game	game;
@@ -623,9 +798,15 @@ int	main(int argc, char *argv[])
 		valid_extension(argv[argc]);
 	// 1. 게임 세팅
 	set_game(&game, argv[argc]);
-	// 2. 게임 실행
+	// 2. key_handler
+	mlx_hook(game.win, X_EVENT_KEY_PRESS, 0, &deal_key, &game);
+	mlx_hook(game.win, X_EVENT_DESTROY_NOTIFY, 0, &close_btn_win, &game);
+	// 3. 게임 실행
+	// draw_map(&game);
 	// execute_game(&game);
-	// mlx_loop(game.mlx);
-	free_game(&game);
+	test_img_init(&game);
+	mlx_loop_hook(game.mlx, &main_loop, &game);
+	mlx_loop(game.mlx);
+	// free_game(&game);
 	return (0);
 }
