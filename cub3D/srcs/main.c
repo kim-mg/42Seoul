@@ -610,6 +610,27 @@ void	set_layer(t_parser *parser, t_game *game)
 	game->map.floor.color = convert_rgb(find_elem(parser->elem_head, ID_FLOOR)->content);
 }
 
+void	set_player(t_game *game)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	while (++i < game->map.rows)
+	{
+		j = -1;
+		while (++j < game->map.cols)
+		{
+			if (ft_strchr("NSWE", game->map.coord[i][j]))
+			{
+				game->player.x = j + 0.5;
+				game->player.y = i + 0.5;
+			}
+		}
+	}
+	// printf("p.x : %f\tp.y : %f\n", game->player.x, game->player.y);
+}
+
 void	set_game(t_game *game, char *data)
 {
 	t_parser	parser;
@@ -621,6 +642,7 @@ void	set_game(t_game *game, char *data)
 		game_error_exit(game, &parser, "mlx or window init failed");
 	set_texture(&parser, game);
 	set_layer(&parser, game);
+	set_player(game);
 	free_parser(&parser);
 }
 
@@ -649,28 +671,33 @@ void	valid_extension(const char *cub)
 // 	}
 // }
 
-int	check_coord(double x1, double y1, double x2, double y2)
-{
-	double	deltaX;
-	double	deltaY;
-	double	step;
+// int	check_coord(double x1, double y1, double x2, double y2)
+// {
+// 	double	deltaX;
+// 	double	deltaY;
+// 	double	step;
 
-	deltaX = x2 - x1;
-	deltaY = y2 - y1;
-	step = (fabs(deltaX) > fabs(deltaY) ? fabs(deltaX) : fabs(deltaY));
-	deltaX /= step;
-	deltaY /= step;
-}
+// 	deltaX = x2 - x1;
+// 	deltaY = y2 - y1;
+// 	step = (fabs(deltaX) > fabs(deltaY) ? fabs(deltaX) : fabs(deltaY));
+// 	deltaX /= step;
+// 	deltaY /= step;
+// }
 
 void	move(t_game *game, double to_x, double to_y)
 {
 	char	**coord;
 
+	(void)game;
+	(void)to_x;
+	(void)to_y;
 	coord = game->map.coord;
-	if (coord[(int)to_x][to_y] != '1')
+	printf("floor: %d\t%d\t%d\n", fabs(game->player.x - to_x) == 0, (int)floor(to_x), (int)floor(to_y));
+	printf("tox : %f\ttoy : %f\tcomp : %c\n", to_x, to_y, coord[(int)floor(to_y)][(int)floor(to_x)]);
+	if (coord[(int)floor(to_y)][(int)floor(to_x)] != '1')
 	{
-		game->map.coord[(int)floor(game->player.x)][(int)floor(game->player.y)] = '0';
-		game->map.coord[(int)floor(to_x)][(int)floor(to_y)] = 'N';
+		game->map.coord[(int)floor(game->player.y)][(int)floor(game->player.x)] = '0';
+		game->map.coord[(int)floor(to_y)][(int)floor(to_x)] = 'N';
 		game->player.x = to_x;
 		game->player.y = to_y;
 		// draw_map(game);
@@ -679,17 +706,20 @@ void	move(t_game *game, double to_x, double to_y)
 
 int	deal_key(int key_code, t_game *game)
 {
+	double	step;
+
 	(void)game;
+	step = 0.1;
 	if (key_code == KEY_ESC)
 		exit(0);
 	if (key_code == KEY_W)
-		move(game, game->player.x - 0.1, game->player.y);
+		move(game, game->player.x, game->player.y - step);
 	if (key_code == KEY_A)
-		move(game, game->player.x, game->player.y - 0.1);
+		move(game, game->player.x - step, game->player.y);
 	if (key_code == KEY_S)
-		move(game, game->player.x + 0.1, game->player.y);
+		move(game, game->player.x, game->player.y + step);
 	if (key_code == KEY_D)
-		move(game, game->player.x, game->player.y + 0.1);
+		move(game, game->player.x + step, game->player.y);
 	return (0);
 }
 
@@ -751,7 +781,28 @@ void	draw_rectangle(t_game *game, int x, int y)
 
 void	draw_player(t_game *game, int x, int y)
 {
-
+	int	i;
+	int	j;
+	double	p_x;
+	double	p_y;
+	
+	p_x = (game->player.x - x) * TILE_SIZE;
+	p_y = (game->player.y - y) * TILE_SIZE;
+	// printf("x : %d\ty : %d\tpx : %f\tpy : %f\n", x, y, p_x, p_y);
+	x *= TILE_SIZE;
+	y *= TILE_SIZE;
+	i = -1;
+	while (++i < TILE_SIZE)
+	{
+		j = -1;
+		while (++j < TILE_SIZE)
+		{
+			if (p_y < i && i < p_y + 8 && p_x < j && j < p_x + 8)
+				game->img.data[(y + i) * (game->map.cols * TILE_SIZE) + x + j] = 0xFF0000;
+			else
+				game->img.data[(y + i) * (game->map.cols * TILE_SIZE) + x + j] = 0xFFFFFF;
+		}
+	}
 }
 
 void	draw_rectangles(t_game *game)

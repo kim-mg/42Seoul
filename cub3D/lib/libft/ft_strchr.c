@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/09 02:16:14 by myunkim           #+#    #+#             */
-/*   Updated: 2021/05/23 19:00:47 by myunkim          ###   ########.fr       */
+/*   Updated: 2022/09/03 18:03:50 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ char	*ft_strchr(const char *s, int c)
 			return (s_ptr);
 		s_ptr++;
 	}
-	if (*s_ptr == cast_c)
+	if (cast_c && *s_ptr == cast_c)
 		return (s_ptr);
 	return (NULL);
 }
