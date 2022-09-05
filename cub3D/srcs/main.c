@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "../lib/libft/libft.h"
-#include "../mlx/mlx.h"
-// #include "../minilibx-linux/mlx.h"
+// #include "../mlx/mlx.h"
+#include "../minilibx-linux/mlx.h"
+#include <stdio.h>
 
 #define X_EVENT_KEY_PRESS	2
 #define X_EVENT_DESTROY_NOTIFY	17
@@ -51,8 +52,16 @@ typedef struct s_map
 
 typedef struct s_player
 {
-	double	x;
-	double	y;
+	double	pos_X;
+	double	pos_Y;
+	double	dir_X;
+	double	dir_Y;
+	double	plane_X;
+	double	plane_Y;
+	int	step;
+
+	double	time;
+	double	old_time;
 }t_player;
 
 typedef struct s_game
@@ -351,13 +360,22 @@ void	parse_cub(t_parser *parser, char *cub)
 
 // ====================================================================================
 // main.c
-enum e_key_setting
+// enum e_key_setting
+// {
+// 	KEY_ESC = 53,
+// 	KEY_W = 13,
+// 	KEY_A = 0,
+// 	KEY_S = 1,
+// 	KEY_D = 2,
+// };
+
+enum e_ubuntu_key
 {
-	KEY_ESC = 53,
-	KEY_W = 13,
-	KEY_A = 0,
-	KEY_S = 1,
-	KEY_D = 2,
+	KEY_ESC = 0xff1b,
+	KEY_W = 0x77,
+	KEY_A = 0x61,
+	KEY_S = 0x73,
+	KEY_D = 0x64,
 };
 
 void	init_game(t_game *game)
@@ -372,6 +390,7 @@ void	init_game(t_game *game)
 	// player
 	game->player.x = 0;
 	game->player.y = 0;
+	game->player.step = 0;
 }
 
 void	free_game(t_game *game)
@@ -684,25 +703,25 @@ void	valid_extension(const char *cub)
 // 	deltaY /= step;
 // }
 
-void	move(t_game *game, double to_x, double to_y)
-{
-	char	**coord;
+// void	move(t_game *game, double to_x, double to_y)
+// {
+// 	char	**coord;
 
-	(void)game;
-	(void)to_x;
-	(void)to_y;
-	coord = game->map.coord;
-	printf("floor: %d\t%d\t%d\n", fabs(game->player.x - to_x) == 0, (int)floor(to_x), (int)floor(to_y));
-	printf("tox : %f\ttoy : %f\tcomp : %c\n", to_x, to_y, coord[(int)floor(to_y)][(int)floor(to_x)]);
-	if (coord[(int)floor(to_y)][(int)floor(to_x)] != '1')
-	{
-		game->map.coord[(int)floor(game->player.y)][(int)floor(game->player.x)] = '0';
-		game->map.coord[(int)floor(to_y)][(int)floor(to_x)] = 'N';
-		game->player.x = to_x;
-		game->player.y = to_y;
-		// draw_map(game);
-	}
-}
+// 	(void)game;
+// 	(void)to_x;
+// 	(void)to_y;
+// 	coord = game->map.coord;
+// 	printf("floor: %d\t%d\t%d\n", (int)fabs(game->player.x - to_x) == 0, (int)round(to_x), (int)round(to_y));
+// 	printf("tox : %f\ttoy : %f\tcomp : %c\n", to_x, to_y, coord[(int)floor(to_y)][(int)floor(to_x)]);
+// 	if (coord[(int)round(to_y)][(int)round(to_x)] != '1')
+// 	{
+// 		game->map.coord[(int)round(game->player.y)][(int)round(game->player.x)] = '0';
+// 		game->map.coord[(int)round(to_y)][(int)round(to_x)] = 'N';
+// 		game->player.x = to_x;
+// 		game->player.y = to_y;
+// 		// draw_map(game);
+// 	}
+// }
 
 int	deal_key(int key_code, t_game *game)
 {
@@ -712,14 +731,14 @@ int	deal_key(int key_code, t_game *game)
 	step = 0.1;
 	if (key_code == KEY_ESC)
 		exit(0);
-	if (key_code == KEY_W)
-		move(game, game->player.x, game->player.y - step);
-	if (key_code == KEY_A)
-		move(game, game->player.x - step, game->player.y);
-	if (key_code == KEY_S)
-		move(game, game->player.x, game->player.y + step);
-	if (key_code == KEY_D)
-		move(game, game->player.x + step, game->player.y);
+	// if (key_code == KEY_W)
+	// 	move(game, game->player.x, game->player.y - step);
+	// if (key_code == KEY_A)
+	// 	move(game, game->player.x - step, game->player.y);
+	// if (key_code == KEY_S)
+	// 	move(game, game->player.x, game->player.y + step);
+	// if (key_code == KEY_D)
+	// 	move(game, game->player.x + step, game->player.y);
 	return (0);
 }
 
@@ -850,8 +869,12 @@ int	main(int argc, char *argv[])
 	// 1. 게임 세팅
 	set_game(&game, argv[argc]);
 	// 2. key_handler
-	mlx_hook(game.win, X_EVENT_KEY_PRESS, 0, &deal_key, &game);
-	mlx_hook(game.win, X_EVENT_DESTROY_NOTIFY, 0, &close_btn_win, &game);
+	// macOS
+	// mlx_hook(game.win, X_EVENT_KEY_PRESS, 0, &deal_key, &game);
+	// mlx_hook(game.win, X_EVENT_DESTROY_NOTIFY, 0, &close_btn_win, &game);	
+	// if Ubuntu
+	mlx_hook(game.win, X_EVENT_KEY_PRESS, 1, &deal_key, &game);
+	mlx_hook(game.win, X_EVENT_DESTROY_NOTIFY, 1, &close_btn_win, &game);
 	// 3. 게임 실행
 	// draw_map(&game);
 	// execute_game(&game);
