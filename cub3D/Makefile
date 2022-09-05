@@ -6,7 +6,7 @@
 #    By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/25 18:57:46 by myunkim           #+#    #+#              #
-#    Updated: 2022/09/04 22:55:29 by myunkim          ###   ########seoul.kr   #
+#    Updated: 2022/09/05 18:32:17 by myunkim          ###   ########seoul.kr   #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,14 @@ else
 endif
 
 DIR_HEADERS = ./includes/
-DIR_SRCS = ./srcs/
+
+# test_RC or not
+ifdef TEST_FLAG
+	DIR_SRCS = ./tests/
+else
+	DIR_SRCS = ./srcs/
+endif
+
 DIR_OBJS = ./objs/
 DIR = ./
 
@@ -36,6 +43,10 @@ NAME = cub3D
 SRCS = test_RC.c
 
 OBJS = $(SRCS:%.c=$(DIR_OBJS)%.o)
+
+# test rule
+test :
+	$(MAKE) TEST_FLAG=1 $(NAME)
 
 all : $(NAME)
 
