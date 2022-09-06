@@ -1,15 +1,17 @@
 #include <math.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/time.h>
 #include "../lib/libft/libft.h"
-// #include "../mlx/mlx.h"
-#include "../minilibx-linux/mlx.h"
+#include "../mlx/mlx.h"
+// #include "../minilibx-linux/mlx.h"
 #include <stdio.h>
 
 #define X_EVENT_KEY_PRESS	2
 #define X_EVENT_DESTROY_NOTIFY	17
 
 #define TILE_SIZE	64
+#define MINIMAP_SIZE	20
 
 # define TO_COORD(X, Y, W) ((int)floor(Y) * W + (int)floor(X))
 
@@ -32,6 +34,7 @@ typedef struct s_img
 
 typedef struct s_texture
 {
+	int		get_texture;
 	t_img	n_wall;
 	t_img	s_wall;
 	t_img	w_wall;
@@ -52,13 +55,16 @@ typedef struct s_map
 
 typedef struct s_player
 {
-	double	pos_X;
-	double	pos_Y;
-	double	dir_X;
-	double	dir_Y;
-	double	plane_X;
-	double	plane_Y;
+	double	pos_x;
+	double	pos_y;
+	double	dir_x;
+	double	dir_y;
+	double	plane_x;
+	double	plane_y;
 	int	step;
+
+	double	mov_spd;
+	double	rot_spd;
 
 	double	time;
 	double	old_time;
@@ -360,26 +366,28 @@ void	parse_cub(t_parser *parser, char *cub)
 
 // ====================================================================================
 // main.c
-// enum e_key_setting
-// {
-// 	KEY_ESC = 53,
-// 	KEY_W = 13,
-// 	KEY_A = 0,
-// 	KEY_S = 1,
-// 	KEY_D = 2,
-// };
-
-enum e_ubuntu_key
+enum e_key_setting
 {
-	KEY_ESC = 0xff1b,
-	KEY_W = 0x77,
-	KEY_A = 0x61,
-	KEY_S = 0x73,
-	KEY_D = 0x64,
+	KEY_ESC = 53,
+	KEY_W = 13,
+	KEY_A = 0,
+	KEY_S = 1,
+	KEY_D = 2,
 };
+
+// enum e_ubuntu_key
+// {
+// 	KEY_ESC = 0xff1b,
+// 	KEY_W = 0x77,
+// 	KEY_A = 0x61,
+// 	KEY_S = 0x73,
+// 	KEY_D = 0x64,
+// };
 
 void	init_game(t_game *game)
 {
+	game->mlx = NULL;
+	game->win = NULL;
 	// map
 	game->map.cols = 0;
 	game->map.rows = 0;
@@ -388,9 +396,21 @@ void	init_game(t_game *game)
 	game->map.ceiling.color = 0;
 	game->map.floor.color = 0;
 	// player
-	game->player.x = 0;
-	game->player.y = 0;
+	game->player.pos_x = 0;
+	game->player.pos_y = 0;
+	game->player.dir_x = 0;
+	game->player.dir_y = 0;
+	game->player.plane_x = 0;
+	game->player.plane_y = 0;
 	game->player.step = 0;
+	
+	game->player.mov_spd = 0;
+	game->player.rot_spd = 0;
+
+	game->player.time = 0;
+	game->player.old_time = 0;
+	// texture
+	game->texture.get_texture = 0;
 }
 
 void	free_game(t_game *game)
@@ -409,12 +429,17 @@ void	free_game(t_game *game)
 		free(game->map.coord);
 		game->map.coord = NULL;
 	}
-	mlx_destroy_image(game->mlx, game->texture.n_wall.ptr);
-	mlx_destroy_image(game->mlx, game->texture.s_wall.ptr);
-	mlx_destroy_image(game->mlx, game->texture.w_wall.ptr);
-	mlx_destroy_image(game->mlx, game->texture.e_wall.ptr);
-	mlx_destroy_window(game->mlx, game->win);
-	free(game->mlx);
+	if (game->texture.get_texture)
+	{
+		mlx_destroy_image(game->mlx, game->texture.n_wall.ptr);
+		mlx_destroy_image(game->mlx, game->texture.s_wall.ptr);
+		mlx_destroy_image(game->mlx, game->texture.w_wall.ptr);
+		mlx_destroy_image(game->mlx, game->texture.e_wall.ptr);
+	}
+	if (game->win)
+		mlx_destroy_window(game->mlx, game->win);
+	if (game->mlx)
+		free(game->mlx);
 }
 
 void	game_error_exit(t_game *game, t_parser *parser, char *err)
@@ -477,6 +502,8 @@ int	valid_map(t_map *map)
 				return (1);
 		}
 	}
+	if (map->sight == 0)
+		return (1);
 	return (0);
 }
 
@@ -541,7 +568,7 @@ int	set_window(t_game *game)
 	if (!game->mlx)
 		return (1);
 	width = game->map.cols * TILE_SIZE;
-	height = game->map.rows * TILE_SIZE;
+	height = game->map.height;
 	game->win = mlx_new_window(game->mlx, width, height, "cub3D");
 	if (!game->win)
 		return (1);
@@ -602,6 +629,7 @@ void	set_texture(t_parser *parser, t_game *game)
 	game->texture.s_wall = xpm_to_img(game, find_elem(parser->elem_head, ID_SOUTH)->content, parser);
 	game->texture.w_wall = xpm_to_img(game, find_elem(parser->elem_head, ID_WEST)->content, parser);
 	game->texture.e_wall = xpm_to_img(game, find_elem(parser->elem_head, ID_EAST)->content, parser);
+	game->texture.get_texture = 1;
 }
 
 int	create_trgb(int t, int r, int g, int b)
@@ -642,8 +670,8 @@ void	set_player(t_game *game)
 		{
 			if (ft_strchr("NSWE", game->map.coord[i][j]))
 			{
-				game->player.x = j + 0.5;
-				game->player.y = i + 0.5;
+				game->player.pos_x = j + 0.5;
+				game->player.pos_y = i + 0.5;
 			}
 		}
 	}
@@ -703,42 +731,68 @@ void	valid_extension(const char *cub)
 // 	deltaY /= step;
 // }
 
-// void	move(t_game *game, double to_x, double to_y)
-// {
-// 	char	**coord;
+void	move(t_game *game, double to_x, double to_y)
+{
+	char	**coord;
 
-// 	(void)game;
-// 	(void)to_x;
-// 	(void)to_y;
-// 	coord = game->map.coord;
-// 	printf("floor: %d\t%d\t%d\n", (int)fabs(game->player.x - to_x) == 0, (int)round(to_x), (int)round(to_y));
-// 	printf("tox : %f\ttoy : %f\tcomp : %c\n", to_x, to_y, coord[(int)floor(to_y)][(int)floor(to_x)]);
-// 	if (coord[(int)round(to_y)][(int)round(to_x)] != '1')
-// 	{
-// 		game->map.coord[(int)round(game->player.y)][(int)round(game->player.x)] = '0';
-// 		game->map.coord[(int)round(to_y)][(int)round(to_x)] = 'N';
-// 		game->player.x = to_x;
-// 		game->player.y = to_y;
-// 		// draw_map(game);
-// 	}
-// }
+	(void)game;
+	(void)to_x;
+	(void)to_y;
+	coord = game->map.coord;
+	// printf("floor: %d\t%d\t%d\n", (int)fabs(game->player.x - to_x) == 0, (int)round(to_x), (int)round(to_y));
+	// printf("tox : %f\ttoy : %f\tcomp : %c\n", to_x, to_y, coord[(int)floor(to_y)][(int)floor(to_x)]);
+	if (coord[(int)floor(to_y)][(int)floor(to_x)] != '1')
+	{
+		game->map.coord[(int)floor(game->player.pos_y)][(int)floor(game->player.pos_x)] = '0';
+		game->map.coord[(int)floor(to_y)][(int)floor(to_x)] = 'N';
+		game->player.pos_x = to_x;
+		game->player.pos_y = to_y;
+		// draw_map(game);
+	}
+}
 
 int	deal_key(int key_code, t_game *game)
 {
-	double	step;
+	char	**coord = game->map.coord;
+	t_player	*p;
 
 	(void)game;
-	step = 0.1;
+	p = &game->player;
 	if (key_code == KEY_ESC)
 		exit(0);
-	// if (key_code == KEY_W)
-	// 	move(game, game->player.x, game->player.y - step);
-	// if (key_code == KEY_A)
-	// 	move(game, game->player.x - step, game->player.y);
-	// if (key_code == KEY_S)
-	// 	move(game, game->player.x, game->player.y + step);
-	// if (key_code == KEY_D)
-	// 	move(game, game->player.x + step, game->player.y);
+	if (key_code == KEY_W)
+	{
+		if (coord[(int)(p->pos_y)][(int)(p->pos_x + p->dir_x * p->mov_spd)] != '1')
+			p->pos_x += p->dir_x * p->mov_spd;
+		if (coord[(int)(p->pos_y + p->dir_y * p->mov_spd)][(int)(p->pos_x)] != '1')
+			p->pos_y += p->dir_y * p->mov_spd;
+	}
+	if (key_code == KEY_S)
+	{
+		if (coord[(int)(p->pos_y)][(int)(p->pos_x - p->dir_x * p->mov_spd)] != '1')
+			p->pos_x -= p->dir_x * p->mov_spd;
+		if (coord[(int)(p->pos_y - p->dir_y * p->mov_spd)][(int)(p->pos_x)] != '1')
+			p->pos_y -= p->dir_y * p->mov_spd;
+	}
+	if (key_code == KEY_D)
+	{
+		double	old_dir_x = p->dir_x;
+		p->dir_x = p->dir_x * cos(p->rot_spd) - p->dir_y * sin(p->rot_spd);
+		p->dir_y = old_dir_x * sin(p->rot_spd) + p->dir_y * cos(p->rot_spd);
+		double	old_plane_x = p->plane_x;
+		p->plane_x = p->plane_x * cos(p->rot_spd) - p->plane_y * sin(p->rot_spd);
+		p->plane_y = old_plane_x * sin(p->rot_spd) + p->plane_y * cos(p->rot_spd);
+	}
+	if (key_code == KEY_A)
+	{
+		double	old_dir_x = p->dir_x;
+		p->dir_x = p->dir_x * cos(-p->rot_spd) - p->dir_y * sin(-p->rot_spd);
+		p->dir_y = old_dir_x * sin(-p->rot_spd) + p->dir_y * cos(-p->rot_spd);
+		double	old_plane_x = p->plane_x;
+		p->plane_x = p->plane_x * cos(-p->rot_spd) - p->plane_y * sin(-p->rot_spd);
+		p->plane_y = old_plane_x * sin(-p->rot_spd) + p->plane_y * cos(-p->rot_spd);
+	}
+	// printf("posX : %f\tpoxY : %f\n", p->pos_x, p->pos_y);
 	return (0);
 }
 
@@ -761,7 +815,7 @@ void	draw_line(t_game *game, double x1, double y1, double x2, double y2)
 	deltaY /= step;
 	while (fabs(x2 - x1) > 0.01 || fabs(y2 - y1) > 0.01)
 	{
-		game->img.data[(int)floor(y1) * (game->map.cols * TILE_SIZE) + (int)floor(x1)] = 0xb3b3b3;
+		game->img.data[(int)floor(y1) * game->map.width + (int)floor(x1)] = 0xb3b3b3;
 		x1 += deltaX;
 		y1 += deltaY;
 	}
@@ -771,56 +825,34 @@ void	draw_lines(t_game *game)
 {
 	int	i;
 	int	j;
+	int	s;
 
+	s = MINIMAP_SIZE;
 	i = -1;
-	while (++i < game->map.cols)
-		draw_line(game, i * TILE_SIZE, 0, i * TILE_SIZE, game->map.rows * TILE_SIZE);
-	draw_line(game, game->map.cols * TILE_SIZE - 1, 0, game->map.cols * TILE_SIZE - 1, game->map.rows * TILE_SIZE);
+	// while (++i < game->map.cols)
+	// 	draw_line(game, i * s, 0, i * s, game->map.rows * s);
+	draw_line(game, game->map.cols * s - 1, 0, game->map.cols * s - 1, game->map.rows * s);
 	j = -1;
-	while (++j < game->map.rows)
-		draw_line(game, 0, j * TILE_SIZE, game->map.cols * TILE_SIZE, j * TILE_SIZE);
-	draw_line(game, 0, game->map.rows * TILE_SIZE - 1, game->map.cols * TILE_SIZE, game->map.rows * TILE_SIZE - 1);
+	// while (++j < game->map.rows)
+	// 	draw_line(game, 0, j * s, game->map.cols * s, j * s);
+	draw_line(game, 0, game->map.rows * s - 1, game->map.cols * s, game->map.rows * s - 1);
 }
 
-void	draw_rectangle(t_game *game, int x, int y)
+void	draw_rectangle(t_game *game, int x, int y, int color)
 {
 	int	i;
 	int	j;
+	int	s;
 
-	x *= TILE_SIZE;
-	y *= TILE_SIZE;
+	s = MINIMAP_SIZE;
+	x *= s;
+	y *= s;
 	i = -1;
-	while (++i < TILE_SIZE)
+	while (++i < s)
 	{
 		j = -1;
-		while (++j < TILE_SIZE)
-			game->img.data[(y + i) * (game->map.cols * TILE_SIZE) + x + j] = 0xFFFFFF;
-	}
-}
-
-void	draw_player(t_game *game, int x, int y)
-{
-	int	i;
-	int	j;
-	double	p_x;
-	double	p_y;
-	
-	p_x = (game->player.x - x) * TILE_SIZE;
-	p_y = (game->player.y - y) * TILE_SIZE;
-	// printf("x : %d\ty : %d\tpx : %f\tpy : %f\n", x, y, p_x, p_y);
-	x *= TILE_SIZE;
-	y *= TILE_SIZE;
-	i = -1;
-	while (++i < TILE_SIZE)
-	{
-		j = -1;
-		while (++j < TILE_SIZE)
-		{
-			if (p_y < i && i < p_y + 8 && p_x < j && j < p_x + 8)
-				game->img.data[(y + i) * (game->map.cols * TILE_SIZE) + x + j] = 0xFF0000;
-			else
-				game->img.data[(y + i) * (game->map.cols * TILE_SIZE) + x + j] = 0xFFFFFF;
-		}
+		while (++j < s)
+			game->img.data[(y + i) * game->map.width + x + j] = color;
 	}
 }
 
@@ -836,25 +868,246 @@ void	draw_rectangles(t_game *game)
 		while (++j < game->map.cols)
 		{
 			if (game->map.coord[i][j] == '1')
-				draw_rectangle(game, j, i);
-			if (ft_strchr("NSWE", game->map.coord[i][j]))
-				draw_player(game, j, i);
+				draw_rectangle(game, j, i, 0xFFFFFF);
+			if (game->map.coord[i][j] != '1')
+				draw_rectangle(game, j, i, 0x000000);
 		}
+	}
+}
+
+void	draw_player_pixels(t_game *game, int x, int y)
+{
+	int	i;
+	int	j;
+	double	p_x;
+	double	p_y;
+	int	s;
+	
+	s = MINIMAP_SIZE;
+	p_x = (game->player.pos_x - x) * s;
+	p_y = (game->player.pos_y - y) * s;
+	x *= s;
+	y *= s;
+	i = -1;
+	while (++i < s)
+	{
+		j = -1;
+		while (++j < s)
+			if ((p_y - 4 < i && i < p_y + 4) && (p_x - 4 < j && j < p_x + 4))
+				game->img.data[(y + i) * game->map.width + x + j] = 0xFF0000;
+	}
+}
+
+void	draw_player_all_position(t_game *game, int x, int y)
+{
+	if (game->map.coord[y - 1][x] != '1')
+		draw_player_pixels(game, x, y - 1);
+	if (game->map.coord[y + 1][x] != '1')
+		draw_player_pixels(game, x, y + 1);
+	if (game->map.coord[y][x - 1] != '1')
+		draw_player_pixels(game, x - 1, y);
+	if (game->map.coord[y][x + 1] != '1')
+		draw_player_pixels(game, x + 1, y);
+	if (game->map.coord[y - 1][x - 1] != '1')
+		draw_player_pixels(game, x - 1, y - 1);
+	if (game->map.coord[y + 1][x - 1] != '1')
+		draw_player_pixels(game, x - 1, y + 1);
+	if (game->map.coord[y - 1][x + 1] != '1')
+		draw_player_pixels(game, x + 1, y - 1);
+	if (game->map.coord[y + 1][x + 1] != '1')
+		draw_player_pixels(game, x + 1, y + 1);
+	draw_player_pixels(game, x, y);
+}
+
+void	draw_player(t_game *game)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	while (++i < game->map.rows)
+	{
+		j = -1;
+		while (++j < game->map.cols)
+			if ((int)game->player.pos_x == j && (int)game->player.pos_y == i)
+				draw_player_all_position(game, j, i);
+	}
+}
+
+void	test_img_init(t_game *game)
+{
+	game->img.ptr = mlx_new_image(game->mlx, game->map.width, game->map.height);
+	game->img.data = (int *)mlx_get_data_addr(game->img.ptr, &game->img.bpp, &game->img.size_l, &game->img.endian);
+}
+
+int verLine(int x, int y1, int y2, int color, t_game *g)
+{
+	if(y2 < y1) {y1 += y2; y2 = y1 - y2; y1 -= y2;} //swap y1 and y2
+	if(y2 < 0 || y1 >= g->map.height  || x < 0 || x >= g->map.width) return 0; //no single point of the line is on screen
+	if(y1 < 0) y1 = 0; //clip
+	if(y2 >= g->map.width) y2 = g->map.height - 1; //clip
+
+	for(int y = y1; y <= y2; y++)
+		g->img.data[y * g->map.width + x] = color;
+	return 1;
+}
+
+void	draw_3d(t_game *game)
+{
+	for (int x = 0; x < game->map.width; ++x)
+	{
+		// ray 위치와 방향 계산
+		double	camera_x = 2 * x / (double)game->map.width - 1;
+		double	rayDir_x = game->player.dir_x + game->player.plane_x * camera_x;
+		double	rayDir_y = game->player.dir_y + game->player.plane_y * camera_x;
+		
+		// 맵에서의 위치
+		int map_x = (int)game->player.pos_x;
+		int map_y = (int)game->player.pos_y;
+
+		// 현재 위치에서 다음 x측 또는 y측까지 ray의 거리
+		double	sideDist_x;
+		double	sideDist_y;
+
+		//
+		double	deltaDist_x = (rayDir_x == 0) ? 1e30 : fabs(1 / rayDir_x);
+		double	deltaDist_y = (rayDir_y == 0) ? 1e30 : fabs(1 / rayDir_y);
+
+		double	perp_wall_dist;
+
+		// x와 y의 방향
+		int	step_x;
+		int	step_y;
+
+		int	hit = 0; // ray가 벽에 맞았는지
+		int	side; // ray가 벽의 옆면에 맞았는지
+		// step과 sideDist를 계산
+		if (rayDir_x < 0)
+		{
+			step_x = -1;
+			sideDist_x = (game->player.pos_x - map_x) * deltaDist_x;
+		}
+		else
+		{
+			step_x = 1;
+			sideDist_x = (map_x + 1.0 - game->player.pos_x) * deltaDist_x;
+		}
+		if (rayDir_y < 0)
+		{
+			step_y = -1;
+			sideDist_y = (game->player.pos_y - map_y) * deltaDist_y;
+		}
+		else
+		{
+			step_y = 1;
+			sideDist_y = (map_y + 1.0 - game->player.pos_y) * deltaDist_y;
+		}
+		// DDA 알고리즘으로 ray가 벽에 맞았는지 계산
+		while (hit == 0)
+		{
+			// x축 방향과 y축 방향으로 단위 블럭씩 넘겨 뜀
+			if (sideDist_x < sideDist_y)
+			{
+				sideDist_x += deltaDist_x;
+				map_x += step_x;
+				side = 0;
+			}
+			else
+			{
+				sideDist_y += deltaDist_y;
+				map_y += step_y;
+				side = 1;
+			}
+			if (game->map.coord[map_y][map_x] == '1')
+				hit = 1;
+		}
+
+		//
+		if (side == 0)
+			perp_wall_dist = (sideDist_x - deltaDist_x);
+		else
+			perp_wall_dist = (sideDist_y - deltaDist_y);
+
+		//
+		int	line_height = (int) (game->map.height / perp_wall_dist);
+
+		//
+		int	draw_start = -line_height / 2 + game->map.height / 2;
+		if (draw_start < 0)
+			draw_start = 0;
+		int	draw_end = line_height / 2 + game->map.height / 2;
+		if (draw_end >= game->map.height)
+			draw_end = game->map.height - 1;
+
+		//
+		int	color;
+		switch (game->map.coord[map_y][map_x])
+		{
+		case '1':
+			color = 0xFFFFFF;
+			break;
+		case '0':
+			color = 0x000000;
+		default:
+			break;
+		}
+
+		//
+		if (side == 1)
+			color = color / 2;
+
+		// draw pixels
+		verLine(x, draw_start, draw_end, color, game);
+	}
+}
+
+void	draw_rays(t_game *game)
+{
+	double	fov_v;
+	double	fov_h;
+
+	fov_h = 1.0 / 6.0;
+	fov_v = game->map.height / game->map.width * fov_h;
+
+	int	i;
+	int	j;
+	double	y;
+	double	dir;
+
+	dir = 1;
+	
+	while (dir < 2)
+	{
+		i = -1;
+		while (++i < game->map.width)
+		{
+			y = dir * i;
+			game->img.data[(int)y * game->map.width + i] = 0xFFFF00;
+		}
+		dir += 0.15;
 	}
 }
 
 int	main_loop(t_game *game)
 {
+	draw_3d(game);
 	draw_rectangles(game);
 	draw_lines(game);
-	mlx_put_image_to_window(game->mlx, game->win, game->img.ptr, 0, 0);
-	return (0);
-}
+	draw_player(game);
+	// draw_rays(game);
+	struct timeval	tv;
 
-void	test_img_init(t_game *game)
-{
-	game->img.ptr = mlx_new_image(game->mlx, game->map.cols * TILE_SIZE, game->map.rows * TILE_SIZE);
-	game->img.data = (int *)mlx_get_data_addr(game->img.ptr, &game->img.bpp, &game->img.size_l, &game->img.endian);
+	gettimeofday(&tv, NULL);
+	game->player.old_time = game->player.time;
+	game->player.time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+	double	frame_time = (game->player.time - game->player.old_time) / 1000.0;
+	game->player.mov_spd = frame_time * 5.0 * 2.0;
+	game->player.rot_spd = frame_time * 3.0 * 2.0;
+
+	mlx_put_image_to_window(game->mlx, game->win, game->img.ptr, 0, 0);
+	mlx_destroy_image(game->mlx, game->img.ptr);
+	test_img_init(game);
+	return (0);
 }
 
 int	main(int argc, char *argv[])
@@ -868,6 +1121,8 @@ int	main(int argc, char *argv[])
 		valid_extension(argv[argc]);
 	// 1. 게임 세팅
 	set_game(&game, argv[argc]);
+	game.player.dir_x = 1;
+	game.player.plane_y = 0.66;
 	// 2. key_handler
 	// macOS
 	// mlx_hook(game.win, X_EVENT_KEY_PRESS, 0, &deal_key, &game);
@@ -881,6 +1136,6 @@ int	main(int argc, char *argv[])
 	test_img_init(&game);
 	mlx_loop_hook(game.mlx, &main_loop, &game);
 	mlx_loop(game.mlx);
-	// free_game(&game);
+	free_game(&game);
 	return (0);
 }

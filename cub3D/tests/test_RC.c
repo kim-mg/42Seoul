@@ -124,14 +124,18 @@ int	deal_key(int key_code, t_player *p)
 		exit(0);
 	if (key_code == KEY_W)
 	{
-		if(worldMap[(int)(p->posX + p->dirX * moveSpeed)][(int)(p->posY)] == false) p->posX += p->dirX * moveSpeed;
-		if(worldMap[(int)(p->posX)][(int)(p->posY + p->dirY * moveSpeed)] == false) p->posY += p->dirY * moveSpeed;
+		if(worldMap[(int)(p->posX + p->dirX * moveSpeed)][(int)(p->posY)] == false)
+			p->posX += p->dirX * moveSpeed;
+		if(worldMap[(int)(p->posX)][(int)(p->posY + p->dirY * moveSpeed)] == false)
+			p->posY += p->dirY * moveSpeed;
 	}
 	//move backwards if no wall behind you
 	if (key_code == KEY_S)
 	{
-		if(worldMap[(int)(p->posX - p->dirX * moveSpeed)][(int)(p->posY)] == false) p->posX -= p->dirX * moveSpeed;
-		if(worldMap[(int)(p->posX)][(int)(p->posY - p->dirY * moveSpeed)] == false) p->posY -= p->dirY * moveSpeed;
+		if(worldMap[(int)(p->posX - p->dirX * moveSpeed)][(int)(p->posY)] == false)
+			p->posX -= p->dirX * moveSpeed;
+		if(worldMap[(int)(p->posX)][(int)(p->posY - p->dirY * moveSpeed)] == false)
+			p->posY -= p->dirY * moveSpeed;
 	}
 	//rotate to the right
 	if (key_code == KEY_D)

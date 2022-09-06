@@ -6,7 +6,7 @@
 #    By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/25 18:57:46 by myunkim           #+#    #+#              #
-#    Updated: 2022/09/05 18:32:17 by myunkim          ###   ########seoul.kr   #
+#    Updated: 2022/09/06 15:09:43 by myunkim          ###   ########seoul.kr   #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,7 +40,7 @@ DIR_LIB = ./lib/
 LFLAGS = -L $(DIR_LIB) -lft -lgnl -lftprintf
 
 NAME = cub3D
-SRCS = test_RC.c
+SRCS = main.c
 
 OBJS = $(SRCS:%.c=$(DIR_OBJS)%.o)
 
