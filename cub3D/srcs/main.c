@@ -829,12 +829,12 @@ void	draw_lines(t_game *game)
 
 	s = MINIMAP_SIZE;
 	i = -1;
-	// while (++i < game->map.cols)
-	// 	draw_line(game, i * s, 0, i * s, game->map.rows * s);
+	while (++i < game->map.cols)
+		draw_line(game, i * s, 0, i * s, game->map.rows * s);
 	draw_line(game, game->map.cols * s - 1, 0, game->map.cols * s - 1, game->map.rows * s);
 	j = -1;
-	// while (++j < game->map.rows)
-	// 	draw_line(game, 0, j * s, game->map.cols * s, j * s);
+	while (++j < game->map.rows)
+		draw_line(game, 0, j * s, game->map.cols * s, j * s);
 	draw_line(game, 0, game->map.rows * s - 1, game->map.cols * s, game->map.rows * s - 1);
 }
 
@@ -1088,8 +1088,28 @@ void	draw_rays(t_game *game)
 	}
 }
 
+void	draw_layer(t_game *game)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	while (++i < game->map.width)
+	{
+		j = -1;
+		while (++j < game->map.height)
+		{
+			if (j < game->map.height / 2)
+				game->img.data[j * game->map.width + i] = game->map.ceiling.color;
+			else
+				game->img.data[j * game->map.width + i] = game->map.floor.color;
+		}
+	}
+}
+
 int	main_loop(t_game *game)
 {
+	draw_layer(game);
 	draw_3d(game);
 	draw_rectangles(game);
 	draw_lines(game);
@@ -1105,8 +1125,8 @@ int	main_loop(t_game *game)
 	game->player.rot_spd = frame_time * 3.0 * 2.0;
 
 	mlx_put_image_to_window(game->mlx, game->win, game->img.ptr, 0, 0);
-	mlx_destroy_image(game->mlx, game->img.ptr);
-	test_img_init(game);
+	// mlx_destroy_image(game->mlx, game->img.ptr);
+	// test_img_init(game);
 	return (0);
 }
 

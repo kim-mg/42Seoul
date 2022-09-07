@@ -293,8 +293,8 @@ int	main_loop(t_player *p)
 
 		//length of ray from one x or y-side to next x or y-side
 		//these are derived as:
-		//deltaDistX = sqrt(1 + (rayDirY * rayDirY) / (rayDirX * rayDirX))
-		//deltaDistY = sqrt(1 + (rayDirX * rayDirX) / (rayDirY * rayDirY))
+		// deltaDistX = sqrt(1 + (rayDirY * rayDirY) / (rayDirX * rayDirX))
+		// deltaDistY = sqrt(1 + (rayDirX * rayDirX) / (rayDirY * rayDirY))
 		//which can be simplified to abs(|rayDir| / rayDirX) and abs(|rayDir| / rayDirY)
 		//where |rayDir| is the length of the vector (rayDirX, rayDirY). Its length,
 		//unlike (dirX, dirY) is not 1, however this does not matter, only the
@@ -402,8 +402,8 @@ int	main_loop(t_player *p)
 	draw_lines(p);
 
 	mlx_put_image_to_window(p->mlx, p->win, p->img.ptr, 0, 0);
-	mlx_destroy_image(p->mlx, p->img.ptr);
-	test_img_init(p);
+	// mlx_destroy_image(p->mlx, p->img.ptr);
+	// test_img_init(p);
 	// int	i = -1;
 	// while (++i < mapHeight * screenWidth)
 	// 	p->img.data[i] = RGB_Black;
