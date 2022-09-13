@@ -3,8 +3,8 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include "../lib/libft/libft.h"
-// #include "../mlx/mlx.h"
-#include "../minilibx-linux/mlx.h"
+#include "../mlx/mlx.h"
+// #include "../minilibx-linux/mlx.h"
 #include <stdio.h>
 
 #define X_EVENT_KEY_PRESS	2
@@ -61,7 +61,18 @@ typedef struct s_player
 	double	dir_y;
 	double	plane_x;
 	double	plane_y;
-	int	step;
+
+	double	raydir_x;
+	double	raydir_y;
+	int		side;
+	int		step_x;
+	int		step_y;
+	double	sidedist_x;
+	double	sidedist_y;
+	double	deltadist_x;
+	double	deltadist_y;
+	int		map_x;
+	int		map_y;
 
 	double	mov_spd;
 	double	rot_spd;
@@ -364,23 +375,23 @@ void	parse_cub(t_parser *parser, char *cub)
 
 // ====================================================================================
 // main.c
-// enum e_key_setting
-// {
-// 	KEY_ESC = 53,
-// 	KEY_W = 13,
-// 	KEY_A = 0,
-// 	KEY_S = 1,
-// 	KEY_D = 2,
-// };
-
-enum e_ubuntu_key
+enum e_key_setting
 {
-	KEY_ESC = 0xff1b,
-	KEY_W = 0x77,
-	KEY_A = 0x61,
-	KEY_S = 0x73,
-	KEY_D = 0x64,
+	KEY_ESC = 53,
+	KEY_W = 13,
+	KEY_A = 0,
+	KEY_S = 1,
+	KEY_D = 2,
 };
+
+// enum e_ubuntu_key
+// {
+// 	KEY_ESC = 0xff1b,
+// 	KEY_W = 0x77,
+// 	KEY_A = 0x61,
+// 	KEY_S = 0x73,
+// 	KEY_D = 0x64,
+// };
 
 void	init_game(t_game *game)
 {
@@ -400,7 +411,6 @@ void	init_game(t_game *game)
 	game->player.dir_y = 0;
 	game->player.plane_x = 0;
 	game->player.plane_y = 0;
-	game->player.step = 0;
 	
 	game->player.mov_spd = 0;
 	game->player.rot_spd = 0;
@@ -700,55 +710,6 @@ void	valid_extension(const char *cub)
 		error_exit("invalid extension");
 }
 
-// void	draw_map(t_game *game)
-// {
-// 	int	i;
-// 	int	j;
-
-// 	i = -1;
-// 	while (++i < game->map.rows)
-// 	{
-// 		j = -1;
-// 		while (++j < game->map.cols)
-// 		{
-
-// 		}
-// 	}
-// }
-
-// int	check_coord(double x1, double y1, double x2, double y2)
-// {
-// 	double	deltaX;
-// 	double	deltaY;
-// 	double	step;
-
-// 	deltaX = x2 - x1;
-// 	deltaY = y2 - y1;
-// 	step = (fabs(deltaX) > fabs(deltaY) ? fabs(deltaX) : fabs(deltaY));
-// 	deltaX /= step;
-// 	deltaY /= step;
-// }
-
-void	move(t_game *game, double to_x, double to_y)
-{
-	char	**coord;
-
-	(void)game;
-	(void)to_x;
-	(void)to_y;
-	coord = game->map.coord;
-	// printf("floor: %d\t%d\t%d\n", (int)fabs(game->player.x - to_x) == 0, (int)round(to_x), (int)round(to_y));
-	// printf("tox : %f\ttoy : %f\tcomp : %c\n", to_x, to_y, coord[(int)floor(to_y)][(int)floor(to_x)]);
-	if (coord[(int)floor(to_y)][(int)floor(to_x)] != '1')
-	{
-		game->map.coord[(int)floor(game->player.pos_y)][(int)floor(game->player.pos_x)] = '0';
-		game->map.coord[(int)floor(to_y)][(int)floor(to_x)] = 'N';
-		game->player.pos_x = to_x;
-		game->player.pos_y = to_y;
-		// draw_map(game);
-	}
-}
-
 int	deal_key(int key_code, t_game *game)
 {
 	char	**coord = game->map.coord;
@@ -790,8 +751,7 @@ int	deal_key(int key_code, t_game *game)
 		p->plane_x = p->plane_x * cos(-p->rot_spd) - p->plane_y * sin(-p->rot_spd);
 		p->plane_y = old_plane_x * sin(-p->rot_spd) + p->plane_y * cos(-p->rot_spd);
 	}
-	// printf("posX : %f\tpoxY : %f\n", p->pos_x, p->pos_y);
-	printf("dir_x: %f\tdir_y: %f\tplane_x: %f\tplane_y: %f\n", p->dir_x, p->dir_y, p->plane_x, p->plane_y);
+	// printf("dir_x: %f\tdir_y: %f\tplane_x: %f\tplane_y: %f\n", p->dir_x, p->dir_y, p->plane_x, p->plane_y);
 	return (0);
 }
 
@@ -939,6 +899,81 @@ void	test_img_init(t_game *game)
 	game->img.data = (int *)mlx_get_data_addr(game->img.ptr, &game->img.bpp, &game->img.size_l, &game->img.endian);
 }
 
+
+// =========================================================================================
+void	set_deltadist(t_player *p)
+{
+	if (!p->raydir_x)
+		p->deltadist_x = 1e30;
+	else
+		p->deltadist_x = fabs(1 / p->raydir_x);
+	if (!p->raydir_y)
+		p->deltadist_y = 1e30;
+	else
+		p->deltadist_y = fabs(1 / p->raydir_y);
+}
+
+void	set_sidedist(t_player *p)
+{
+	if (p->raydir_x < 0)
+	{
+		p->step_x = -1;
+		p->sidedist_x = (p->pos_x - (int)p->pos_x) * p->deltadist_x;
+	}
+	else
+	{
+		p->step_x = 1;
+		p->sidedist_x = ((int)p->pos_x - p->pos_x + 1.0) * p->deltadist_x;
+	}
+	if (p->raydir_y < 0)
+	{
+		p->step_y = -1;
+		p->sidedist_y = (p->pos_y - (int)p->pos_y) * p->deltadist_y;
+	}
+	else
+	{
+		p->step_y = 1;
+		p->sidedist_y = ((int)p->pos_y - p->pos_y + 1.0) * p->deltadist_y;
+	}
+}
+
+void	set_ray(t_player *p, double camera_x)
+{
+	p->map_x = (int)p->pos_x;
+	p->map_y = (int)p->pos_y;
+	p->raydir_x = p->dir_x + p->plane_x * camera_x;
+	p->raydir_y = p->dir_y + p->plane_y * camera_x;
+	set_deltadist(p);
+	set_sidedist(p);
+}
+
+double	get_dist(t_game *game)
+{
+	while (1)
+	{
+		if (game->player.sidedist_x < game->player.sidedist_y)
+		{
+			game->player.sidedist_x += game->player.deltadist_x;
+			game->player.map_x += game->player.step_x;
+			game->player.side = 0;
+		}
+		else
+		{
+			game->player.sidedist_y += game->player.deltadist_y;
+			game->player.map_y += game->player.step_y;
+			game->player.side = 1;
+		}
+		if (game->map.coord[game->player.map_y][game->player.map_x] == '1')
+			break ;
+	}
+	if (!game->player.side)
+		return (game->player.sidedist_x - game->player.deltadist_x);
+	else
+		return (game->player.sidedist_y - game->player.deltadist_y);
+}
+
+
+
 int verLine(int x, int y1, int y2, int color, t_game *g)
 {
 	if(y2 < y1) {y1 += y2; y2 = y1 - y2; y1 -= y2;} //swap y1 and y2
@@ -1060,59 +1095,176 @@ void	draw_3d(t_game *game)
 	}
 }
 
-void	draw_ray(t_game *game, int x, int y)
+void	draw_ray(t_game *game, int x, int y, int base_x)
 {
-	if ((int)(game->player.pos_x * TILE_SIZE) <= x && 0 <= y && y < game->map.height)
-		game->img.data[y * game->map.width + x] = 0xFFFF00;
+	double	wall_x;
+	double	wall_y;
+	double	p_pos[2];
+
+	(void)base_x;
+	p_pos[0] = game->player.pos_x * MINIMAP_SIZE;
+	p_pos[1] = game->player.pos_y * MINIMAP_SIZE;
+	// wall_x = p_pos[0] + (game->player.sidedist_x * game->player.step_x * TILE_SIZE);
+	// wall_y = p_pos[1] + (game->player.sidedist_y * game->player.step_y * TILE_SIZE);
+	wall_x = game->player.map_x * MINIMAP_SIZE;
+	wall_y = game->player.map_y * MINIMAP_SIZE;
+	// printf("wall_x: %f\twall_y: %f\n", wall_x, wall_y);
+	// if (game->player.step_x == 1 && game->player.step_y == 1)
+	// 	if (p_pos[0] <= x && x < wall_x && p_pos[1] <= y && y < wall_y)
+	// 		game->img.data[y * game->map.width + x] = 0xFFFF00;
+	// if (game->player.step_x == 1 && game->player.step_y == -1)
+	// 	if (p_pos[0] <= x && x < wall_x && wall_y <= y && y <= p_pos[1])
+	// 		game->img.data[y * game->map.width + x] = 0xFFFF00;
+	// if (game->player.step_x == -1 && game->player.step_y == 1)
+	// 	if (wall_x <= x && x < p_pos[0] && p_pos[1] <= y && y < wall_y)
+	// 		game->img.data[y * game->map.width + x] = 0xFFFF00;
+	// if (game->player.step_x == -1 && game->player.step_y == -1)
+	// 	if (wall_x <= x && x < p_pos[0] && wall_y <= y && y <= p_pos[1])
+	// 		game->img.data[y * game->map.width + x] = 0xFFFF00;
+	// if (base_x)
+	// {
+	// 	if (game->player.step_x == 1)
+	// 		if (game->player.pos_y * TILE_SIZE <= y && y <= game->player.map_y * TILE_SIZE)
+	// 			game->img.data[y * game->map.width + x] = 0xFFFF00;
+	// 	if (game->player.step_x == -1)
+	// 		if ((game->player.map_y + 1) * TILE_SIZE <= y && y <= game->player.pos_y * TILE_SIZE)
+	// 			game->img.data[y * game->map.width + x] = 0xFFFF00;
+	// }
+	if (base_x)
+	{
+		// if (game->player.step_y == 1 && p_pos[1] <= y && y < game->player.map_y * MINIMAP_SIZE)
+		// 	if (0 < x && x < game->map.width)
+		// 		game->img.data[y * game->map.width + x] = 0xFFFF00;
+		// if (game->player.step_y == -1 && (game->player.map_y + 1) * MINIMAP_SIZE < y && y <= p_pos[1])
+		// 	if (0 < x && x < game->map.width)
+		// 		game->img.data[y * game->map.width + x] = 0xFFFF00;
+
+		// if (game->player.step_y == 1 && p_pos[1] <= y && y < game->player.map_y * MINIMAP_SIZE)
+		// 	if (0 < x && x < game->map.width)
+		// 		game->img.data[y * game->map.width + x] = 0xFFFF00;
+		// if (game->player.step_y == -1 && (game->player.map_y + 1) * MINIMAP_SIZE <= y && y <= p_pos[1])
+		// 	if (0 < x && x < game->map.width)
+		// 		game->img.data[y * game->map.width + x] = 0xFFFF00;
+		
+
+		// if (game->player.step_x == 1 && p_pos[0] <= x && x < game->player.map_x * MINIMAP_SIZE)
+		// {
+			
+		// 		game->img.data[y * game->map.width + x] = 0xFFFF00;
+		// 		game->img.data[y * game->map.width + x] = 0xFFFF00;
+		// }	
+		// if (game->player.step_x == -1 && (game->player.map_x + 1) * MINIMAP_SIZE < x && x <= p_pos[0])
+		// {
+		// 	if (game->player.step_y == 1 && p_pos[1] <= y && y < game->player.map_y * MINIMAP_SIZE)
+		// 		game->img.data[y * game->map.width + x] = 0xFFFF00;
+		// 	if (game->player.step_y == -1 && (game->player.map_y + 1) * MINIMAP_SIZE <= y && y <= p_pos[1])
+		// 		game->img.data[y * game->map.width + x] = 0xFFFF00;
+		// }
+	}
+	if (!base_x)
+	{
+		// if (0 <= y && y < game->map.height)
+		// 	game->img.data[y * game->map.width + x] = 0xFFFF00;
+
+		if (game->player.step_x == 1 && p_pos[0] <= x && x < game->player.map_x * MINIMAP_SIZE)
+			if (0 < y && y < game->map.height)
+				game->img.data[y * game->map.width + x] = 0xFFFF00;
+		if (game->player.step_x == -1 && (game->player.map_x + 1) * MINIMAP_SIZE < x && x <= p_pos[0])
+			if (0 < y && y < game->map.height)
+				game->img.data[y * game->map.width + x] = 0xFFFF00;
+		if (game->player.step_y == 1)
+			if (p_pos[1] <= y && y <= game->player.map_y * MINIMAP_SIZE)
+				game->img.data[y * game->map.width + x] = 0xFFFF00;
+		if (game->player.step_y == -1)
+			if ((game->player.map_y + 1) * MINIMAP_SIZE <= y && y <= p_pos[1])
+				game->img.data[y * game->map.width + x] = 0xFFFF00;
+	}
+}
+
+void	draw_ray_y(t_game *game, double raydir_x, double raydir_y)
+{
+	int		i;
+	int		y;
+	double	m;
+	double	p_pos[2];
+
+	p_pos[0] = game->player.pos_x * MINIMAP_SIZE;
+	p_pos[1] = game->player.pos_y * MINIMAP_SIZE;
+	m = raydir_y / raydir_x;
+	i = -1;
+	while (++i < game->map.width)
+	{
+		int	top = game->player.map_x * MINIMAP_SIZE;
+		int	bottom = (game->player.map_x + 1) * MINIMAP_SIZE;
+		y = (int)(m * (i - p_pos[0]) + p_pos[1]);
+		if ((raydir_x >= 0 && raydir_y >= 0)
+			&& p_pos[0] <= i && i < top)
+			game->img.data[y * game->map.width + i] = 0xFFFF00;
+		if ((raydir_x >= 0 && raydir_y <= 0)
+			&& p_pos[0] <= i && i < top)
+			game->img.data[y * game->map.width + i] = 0xFFFF00;
+		if ((raydir_x <= 0 && raydir_y >= 0)
+			&& bottom <= i && i < p_pos[0])
+			game->img.data[y * game->map.width + i] = 0xFFFF00;
+		if ((raydir_x <= 0 && raydir_y <= 0)
+			&& bottom <= i &&  i < p_pos[0])
+			game->img.data[y * game->map.width + i] = 0xFFFF00;
+
+		// if (game->player.step_x > 0 && game->player.step_y > 0 && p_pos[0] <= i)
+		// 	draw_ray(game, i, y, 0);
+	}
+}
+
+void	draw_ray_x(t_game *game, double raydir_x, double raydir_y)
+{
+	int		i;
+	int		x;
+	double	m;
+	double	p_pos[2];
+
+	p_pos[0] = game->player.pos_x * MINIMAP_SIZE;
+	p_pos[1] = game->player.pos_y * MINIMAP_SIZE;
+	m = raydir_x / raydir_y;
+	i = -1;
+	while (++i < game->map.height)
+	{
+		int	top = game->player.map_y * MINIMAP_SIZE;
+		int	bottom = (game->player.map_y + 1) * MINIMAP_SIZE;
+
+		x = (int)(m * (i - p_pos[1]) + p_pos[0]);
+		if ((raydir_y >= 0 && raydir_x >= 0)
+			&& p_pos[1] <= i && i < top)
+			game->img.data[i * game->map.width + x] = 0xFFFF00;
+		if ((raydir_y >= 0 && raydir_x <= 0)
+			&& p_pos[1] <= i && i < top)
+			game->img.data[i * game->map.width + x] = 0xFFFF00;
+		if ((raydir_y <= 0 && raydir_x >= 0)
+			&& bottom <= i && i < p_pos[1])
+			game->img.data[i * game->map.width + x] = 0xFFFF00;
+		if ((raydir_y <= 0 && raydir_x <= 0)
+			&& bottom <= i &&  i < p_pos[1])
+			game->img.data[i * game->map.width + x] = 0xFFFF00;
+	}
 }
 
 void	draw_rays(t_game *game, int	ray_cnt)
 {
-	for (int x = 0; x < ray_cnt; ++x)
+	int		i;
+	double	camera_x;
+	double	raydir_x;
+	double	raydir_y;
+
+	i = -1;
+	while (++i < ray_cnt)
 	{
-		double	camera_x = 2 * x / (double)ray_cnt - 1;
-		double	rayDir_x = game->player.dir_x + game->player.plane_x * camera_x;
-		double	rayDir_y = game->player.dir_y + game->player.plane_y * camera_x;
-		int	i;
-
-		i = -1;
-		while (++i < game->map.width)
-		{
-			double	m = rayDir_y / rayDir_x;
-			int	y = (int)(m * ((double)i - (game->player.pos_x * TILE_SIZE)) + (game->player.pos_y * TILE_SIZE));
-
-			if ((rayDir_x >= 0 && rayDir_y >= 0)
-				&& ((game->player.pos_x * TILE_SIZE) <= i && y <= game->map.height))
-				game->img.data[y * game->map.width + i] = 0xFFFF00;
-			if ((rayDir_x >= 0 && rayDir_y <= 0)
-				&& ((game->player.pos_x * TILE_SIZE) <= i && 0 <= y))
-				game->img.data[y * game->map.width + i] = 0xFFFF00;
-			if ((rayDir_x <= 0 && rayDir_y >= 0)
-				&& (i <= (game->player.pos_x * TILE_SIZE) && y <= game->map.height))
-				game->img.data[y * game->map.width + i] = 0xFFFF00;
-			if ((rayDir_x <= 0 && rayDir_y <= 0)
-				&& (i <= (game->player.pos_x * TILE_SIZE) && 0 <= y))
-				game->img.data[y * game->map.width + i] = 0xFFFF00;
-		}
-		i = -1;
-		while (++i < game->map.height)
-		{
-			double	m = rayDir_x / rayDir_y;
-			int	x = (int)(m * ((double)i - (game->player.pos_y * TILE_SIZE)) + (game->player.pos_x * TILE_SIZE));
-
-			if ((rayDir_y >= 0 && rayDir_x >= 0)
-				&& ((game->player.pos_y * TILE_SIZE) <= i && x <= game->map.width))
-				game->img.data[i * game->map.width + x] = 0xFFFF00;
-			if ((rayDir_y >= 0 && rayDir_x <= 0)
-				&& ((game->player.pos_y * TILE_SIZE) <= i && 0 <= x))
-				game->img.data[i * game->map.width + x] = 0xFFFF00;
-			if ((rayDir_y <= 0 && rayDir_x >= 0)
-				&& (i <= (game->player.pos_y * TILE_SIZE) && x <= game->map.width))
-				game->img.data[i * game->map.width + x] = 0xFFFF00;
-			if ((rayDir_y <= 0 && rayDir_x <= 0)
-				&& (i <= (game->player.pos_y * TILE_SIZE) && 0 <= x))
-				game->img.data[i * game->map.width + x] = 0xFFFF00;
-		}
+		camera_x = 2 * i/ (double)ray_cnt - 1;
+		raydir_x = game->player.dir_x + game->player.plane_x * camera_x;
+		raydir_y = game->player.dir_y + game->player.plane_y * camera_x;
+		set_ray(&game->player, camera_x);
+		get_dist(game);
+		// printf("sideDist_X: %f\tsideDist_Y: %f\n", game->player.sidedist_x, game->player.sidedist_y);
+		draw_ray_y(game, raydir_x, raydir_y);
+		draw_ray_x(game, raydir_x, raydir_y);
 	}
 }
 
@@ -1142,7 +1294,7 @@ int	main_loop(t_game *game)
 	draw_rectangles(game);
 	draw_lines(game);
 	draw_player(game);
-	draw_rays(game, 1000);
+	draw_rays(game, 100);
 	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
