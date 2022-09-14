@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/23 02:14:57 by myunkim           #+#    #+#             */
-/*   Updated: 2022/04/23 03:10:12 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/09/14 21:21:06 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,16 +30,16 @@ void	get_info_comp(t_game *game)
 	int	j;
 
 	i = -1;
-	while (++i < game->map.rows)
+	while (++i < game->TILE.rows)
 	{
 		j = -1;
-		while (++j < game->map.cols)
+		while (++j < game->TILE.cols)
 		{
-			if (game->map.coord[i][j] == 'C')
+			if (game->TILE.coord[i][j] == 'C')
 				game->comp.c++;
-			if (game->map.coord[i][j] == 'E')
+			if (game->TILE.coord[i][j] == 'E')
 				game->comp.e++;
-			if (game->map.coord[i][j] == 'P')
+			if (game->TILE.coord[i][j] == 'P')
 			{
 				game->player.x = i;
 				game->player.y = j;

@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/23 02:17:33 by myunkim           #+#    #+#             */
-/*   Updated: 2022/09/03 18:07:57 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/09/14 21:21:06 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,15 +40,15 @@ void	move(t_game *game, int to_x, int to_y)
 {
 	char	**coord;
 
-	coord = game->map.coord;
+	coord = game->TILE.coord;
 	if (coord[to_x][to_y] == 'C')
 		game->player.collect++;
 	if (coord[to_x][to_y] == 'E' && game->player.collect == game->comp.c)
 		clear_game(game);
 	if (coord[to_x][to_y] != '1' && coord[to_x][to_y] != 'E' )
 	{
-		game->map.coord[game->player.x][game->player.y] = '0';
-		game->map.coord[to_x][to_y] = 'P';
+		game->TILE.coord[game->player.x][game->player.y] = '0';
+		game->TILE.coord[to_x][to_y] = 'P';
 		game->player.x = to_x;
 		game->player.y = to_y;
 		game->player.move++;

@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/23 02:08:46 by myunkim           #+#    #+#             */
-/*   Updated: 2022/08/29 17:24:59 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/09/14 21:21:06 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,8 @@ void	init_window(t_game *game)
 	game->mlx = mlx_init();
 	if (!game->mlx)
 		error_exit("init error : mlx init failed.");
-	width = game->map.cols * TILE_SIZE;
-	height = game->map.rows * TILE_SIZE;
+	width = game->TILE.cols * TILE_SIZE;
+	height = game->TILE.rows * TILE_SIZE;
 	game->win = mlx_new_window(game->mlx, width, height, "so_long");
 	if (!game->win)
 		error_exit("init error : window init failed.");
@@ -56,9 +56,9 @@ void	init_img(t_game *game)
 
 void	init_game(t_game *game)
 {
-	game->map.rows = 0;
-	game->map.cols = 0;
-	game->map.coord = NULL;
+	game->TILE.rows = 0;
+	game->TILE.cols = 0;
+	game->TILE.coord = NULL;
 	game->comp.c = 0;
 	game->comp.e = 0;
 	game->comp.p = 0;

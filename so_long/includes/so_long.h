@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/23 02:11:45 by myunkim           #+#    #+#             */
-/*   Updated: 2022/04/24 18:22:02 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/09/14 21:21:06 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ typedef struct s_game
 	void		*mlx;
 	void		*win;
 	t_imgs		imgs;
-	t_map		map;
+	t_map		TILE;
 	t_player	player;
 	t_comp		comp;
 }			t_game;

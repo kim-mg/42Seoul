@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/26 22:45:25 by myunkim           #+#    #+#             */
-/*   Updated: 2022/09/02 15:58:00 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/09/14 21:21:06 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	main(int argc, char *argv[])
 	t_game	game;
 
 	if (--argc < 1)
-		error_exit("main error : need execute with map file.");
+		error_exit("main error : need execute with TILE file.");
 	set_game(&game, argv[argc]);
 	mlx_hook(game.win, X_EVENT_KEY_PRESS, 0, &deal_key, &game);
 	mlx_hook(game.win, X_EVENT_KEY_RELEASE, 0, &win_close, &game);

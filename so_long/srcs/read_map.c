@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/23 02:16:00 by myunkim           #+#    #+#             */
-/*   Updated: 2022/04/23 03:10:29 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/09/14 21:21:06 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	get_fd(char *filename)
 
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
-		error_exit("map read error : file open failed.");
+		error_exit("TILE read error : file open failed.");
 	return (fd);
 }
 
@@ -33,9 +33,9 @@ void	check_ext(char *s)
 
 	i = ft_strlen(s) - 4;
 	if (i < 1 || s[i] != '.')
-		error_exit("map read error : file does not have name or extension.");
+		error_exit("TILE read error : file does not have name or extension.");
 	if (ft_memcmp(&s[i], ".ber", 4))
-		error_exit("map read error : file extension was not '.ber'.");
+		error_exit("TILE read error : file extension was not '.ber'.");
 }
 
 void	get_size_map(t_game *game, int fd)
@@ -46,18 +46,18 @@ void	get_size_map(t_game *game, int fd)
 	max_cols = 0;
 	while (read(fd, &c, 1) > 0)
 	{
-		if (game->map.cols < max_cols)
-			game->map.cols = max_cols;
+		if (game->TILE.cols < max_cols)
+			game->TILE.cols = max_cols;
 		if (c == '\n')
 		{
-			game->map.rows++;
+			game->TILE.rows++;
 			max_cols = 0;
 		}
 		else
 			max_cols++;
 	}
 	if (max_cols)
-		game->map.rows++;
+		game->TILE.rows++;
 }
 
 void	malloc_map(t_game *game, int fd)
@@ -65,15 +65,15 @@ void	malloc_map(t_game *game, int fd)
 	int	i;
 
 	get_size_map(game, fd);
-	game->map.coord = (char **)malloc(sizeof(char *) * game->map.rows);
-	if (!game->map.coord)
-		error_exit("map malloc failed.");
+	game->TILE.coord = (char **)malloc(sizeof(char *) * game->TILE.rows);
+	if (!game->TILE.coord)
+		error_exit("TILE malloc failed.");
 	i = -1;
-	while (++i < game->map.rows)
+	while (++i < game->TILE.rows)
 	{
-		game->map.coord[i] = (char *)malloc(game->map.cols + 1);
-		if (!game->map.coord[i])
-			error_exit("map malloc failed.");
+		game->TILE.coord[i] = (char *)malloc(game->TILE.cols + 1);
+		if (!game->TILE.coord[i])
+			error_exit("TILE malloc failed.");
 	}
 }
 

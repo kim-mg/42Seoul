@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2022/04/25 18:57:46 by myunkim           #+#    #+#              #
-#    Updated: 2022/09/13 14:05:19 by myunkim          ###   ########seoul.kr   #
-#                                                                              #
-# **************************************************************************** #
-
 CC = cc
 # CFLAGS = 
 CFLAGS = -Wall -Wextra -Werror
@@ -40,7 +28,22 @@ DIR_LIB = ./lib/
 LFLAGS = -L $(DIR_LIB) -lft -lgnl -lftprintf
 
 NAME = cub3D
-SRCS = main.c
+SRCS = draw_3d.c \
+		draw_map.c \
+		draw_player.c \
+		draw_rays.c \
+		error.c \
+		free.c \
+		init.c \
+		key.c \
+		layer.c \
+		map.c \
+		parsing.c \
+		set_game.c \
+		texture.c \
+		util.c \
+		main.c
+
 
 OBJS = $(SRCS:%.c=$(DIR_OBJS)%.o)
 
