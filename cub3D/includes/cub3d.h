@@ -12,8 +12,8 @@
 # define X_EVENT_KEY_PRESS	2
 # define X_EVENT_DESTROY_NOTIFY	17
 
-# define WIDTH		1920
-# define HEIGHT		1200
+# define WIDTH		1440
+# define HEIGHT		900
 # define MINI		20
 # define RAY_SIZE	100
 
@@ -37,12 +37,12 @@ enum e_key_setting
 
 typedef enum e_identity
 {
-	ID_NORTH = 1 << 0,
-	ID_SOUTH = 1 << 1,
-	ID_WEST = 1 << 2,
-	ID_EAST = 1 << 3,
-	ID_CEILING = 1 << 4,
-	ID_FLOOR = 1 << 5,
+	NORTH = 1 << 0,
+	SOUTH = 1 << 1,
+	WEST = 1 << 2,
+	EAST = 1 << 3,
+	CEILING = 1 << 4,
+	FLOOR = 1 << 5,
 }	t_identity;
 
 typedef enum e_parse_section
@@ -189,31 +189,28 @@ void		init_game(t_game *game);
 void		parser_init(t_parser *parser);
 
 // key.c
-int	close_btn_win(t_game *game);
-void	move(t_game *game, double to_x, double to_y);
-int	deal_key(int key_code, t_game *game);
+int			close_btn_win(t_game *game);
+int			deal_key(int key_code, t_game *game);
 
 // layer.c
-void	draw_layer(t_game *game);
-void	set_layer(t_parser *parser, t_game *game);
+void		draw_layer(t_game *game, t_map *map);
+void		set_layer(t_parser *parser, t_game *game, t_map *map);
 
 // map.c
-void	set_map(t_parser *parser, t_game *game);
+void		set_map(t_parser *parser, t_game *game);
 
 // error.c
 void		error_exit(char *err);
-void	game_error_exit(t_game *game, t_parser *parser, char *err);
-void	parse_error_exit(t_parser *parser, char *err);
+void		game_error_exit(t_game *game, t_parser *parser, char *err);
+void		parse_error_exit(t_parser *parser, char *err);
 
-// parsing.c
-void		free_strarr(char **arr);
+// parsing_util.c
 t_element	*new_elem(t_element *head, char *cont, t_parse_section sect, t_identity ident);
 void		add_elem(t_element **e_head, char *cont, t_parse_section sect, t_identity ident);
 char		**pre_proc_elem(char *line);
+
+// parsing.c
 int			get_elem(t_parser *parser, char *line);
-void		free_parser(t_parser *parser);
-void		parse_error_exit(t_parser *parser, char *err);
-void		parser_init(t_parser *parser);
 void		check_section(t_parser *parser);
 void		get_map_data(t_parser *parser, char *line);
 void		parse_cub(t_parser *parser, char *cub);
@@ -222,17 +219,13 @@ void		parse_cub(t_parser *parser, char *cub);
 void		draw_texture(t_game *game, int x, t_img *wall, double dist);
 
 // set_game.c
-void	set_game(t_game *game, char *data);
+void		set_game(t_game *game, char *data);
 
 // util.c
-int valid_elem(t_parser *parser, t_parse_section sect);
+int 		valid_elem(t_parser *parser, t_parse_section sect);
 t_element	*find_elem(t_element *head, t_identity ident);
-t_img	xpm_to_img(t_game *game, char *file, t_parser *parser);
-void	img_init(t_game *game);
-void	copy_map(char *map, char *data, int len);
-
-
-
-void		draw_layer(t_game *game);
+t_img		xpm_to_img(t_game *game, char *file, t_parser *parser);
+void		img_init(t_game *game);
+void		copy_map(char *map, char *data, int len);
 
 #endif

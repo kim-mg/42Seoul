@@ -2,12 +2,12 @@
 
 void	draw_player_pixels(t_game *game, int x, int y)
 {
-	int	i;
-	int	j;
+	int		i;
+	int		j;
 	double	p_x;
 	double	p_y;
-	int	s;
-	
+	int		s;
+
 	s = MINI;
 	p_x = (game->player.pos_x - x) * s;
 	p_y = (game->player.pos_y - y) * s;

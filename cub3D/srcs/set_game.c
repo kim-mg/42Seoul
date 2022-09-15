@@ -53,13 +53,13 @@ void	set_texture(t_parser *parser, t_game *game)
 
 	if (valid_elem(parser, PS_TEXTURE))
 		game_error_exit(game, parser, "texture element unsatisfied");
-	elem = find_elem(parser->elem_head, ID_NORTH);
+	elem = find_elem(parser->elem_head, NORTH);
 	game->texture.n_wall = xpm_to_img(game, elem->content, parser);
-	elem = find_elem(parser->elem_head, ID_SOUTH);
+	elem = find_elem(parser->elem_head, SOUTH);
 	game->texture.s_wall = xpm_to_img(game, elem->content, parser);
-	elem = find_elem(parser->elem_head, ID_WEST);
+	elem = find_elem(parser->elem_head, WEST);
 	game->texture.w_wall = xpm_to_img(game, elem->content, parser);
-	elem = find_elem(parser->elem_head, ID_EAST);
+	elem = find_elem(parser->elem_head, EAST);
 	game->texture.e_wall = xpm_to_img(game, elem->content, parser);
 	game->texture.get_texture = 1;
 }
@@ -74,7 +74,7 @@ void	set_game(t_game *game, char *data)
 	if (set_window(game))
 		game_error_exit(game, &parser, "mlx or window init failed");
 	set_texture(&parser, game);
-	set_layer(&parser, game);
+	set_layer(&parser, game, &game->map);
 	set_player(game);
 	img_init(game);
 	free_parser(&parser);

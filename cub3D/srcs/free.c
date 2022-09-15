@@ -69,4 +69,3 @@ void	free_game(t_game *game)
 	if (game->mlx)
 		free(game->mlx);
 }
-

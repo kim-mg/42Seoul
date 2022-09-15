@@ -39,6 +39,7 @@ SRCS = draw_3d.c \
 		layer.c \
 		map.c \
 		parsing.c \
+		parsing_util.c \
 		set_game.c \
 		texture.c \
 		util.c \

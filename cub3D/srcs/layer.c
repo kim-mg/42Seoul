@@ -5,7 +5,7 @@ int	create_trgb(int t, int r, int g, int b)
 	return (t << 24 | r << 16 | g << 8 | b);
 }
 
-int	convert_rgb(char *data)
+int	to_rgb(char *data)
 {
 	int		rtn;
 	char	**rgb;
@@ -17,29 +17,29 @@ int	convert_rgb(char *data)
 	return (rtn);
 }
 
-void	set_layer(t_parser *parser, t_game *game)
+void	set_layer(t_parser *parser, t_game *game, t_map *map)
 {
 	if (valid_elem(parser, PS_LAYER))
 		game_error_exit(game, parser, "texture element unsatisfied");
-	game->map.ceiling.color = convert_rgb(find_elem(parser->elem_head, ID_CEILING)->content);
-	game->map.floor.color = convert_rgb(find_elem(parser->elem_head, ID_FLOOR)->content);
+	map->ceiling.color = to_rgb(find_elem(parser->elem_head, CEILING)->content);
+	map->floor.color = to_rgb(find_elem(parser->elem_head, FLOOR)->content);
 }
 
-void	draw_layer(t_game *game)
+void	draw_layer(t_game *game, t_map *map)
 {
 	int	i;
 	int	j;
 
 	i = -1;
-	while (++i < game->map.width)
+	while (++i < map->width)
 	{
 		j = -1;
-		while (++j < game->map.height)
+		while (++j < map->height)
 		{
-			if (j < game->map.height / 2)
-				game->img.data[j * game->map.width + i] = game->map.ceiling.color;
+			if (j < map->height / 2)
+				game->img.data[j * map->width + i] = map->ceiling.color;
 			else
-				game->img.data[j * game->map.width + i] = game->map.floor.color;
+				game->img.data[j * map->width + i] = map->floor.color;
 		}
 	}
 }

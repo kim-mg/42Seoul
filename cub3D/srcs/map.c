@@ -6,7 +6,7 @@ int	valid_wall(t_map *map, int i, int j)
 		&& map->coord[i][j] == '0')
 		return (1);
 	if (i != 0 && j != 0 && i != map->rows - 1
-		&& j != map->cols - 1&& map->coord[i][j] == ' ')
+		&& j != map->cols - 1 && map->coord[i][j] == ' ')
 		if (map->coord[i][j - 1] == '0' || map->coord[i - 1][j] == '0'
 			|| map->coord[i][j + 1] == '0' || map->coord[i + 1][j] == '0')
 			return (1);
@@ -81,7 +81,6 @@ char	**mapping(t_map_data *map)
 	free_strarr(data);
 	return (rtn);
 }
-
 
 void	set_map(t_parser *parser, t_game *game)
 {

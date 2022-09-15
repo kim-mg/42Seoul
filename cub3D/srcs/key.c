@@ -1,63 +1,70 @@
 #include "../includes/cub3d.h"
 
-void	move(t_game *game, double to_x, double to_y)
+void	move_player(int key_code, t_game *game)
 {
-	char	**coord;
+	char		**c;
+	t_player	*p;
 
-	(void)game;
-	(void)to_x;
-	(void)to_y;
-	coord = game->map.coord;
-	if (coord[(int)floor(to_y)][(int)floor(to_x)] != '1')
+	c = game->map.coord;
+	p = &game->player;
+	if (key_code == KEY_W)
 	{
-		game->map.coord[(int)floor(game->player.pos_y)][(int)floor(game->player.pos_x)] = '0';
-		game->map.coord[(int)floor(to_y)][(int)floor(to_x)] = 'N';
-		game->player.pos_x = to_x;
-		game->player.pos_y = to_y;
+		if (c[(int)(p->pos_y)][(int)(p->pos_x + p->dir_x * p->mov_spd)] != '1')
+			p->pos_x += p->dir_x * p->mov_spd;
+		if (c[(int)(p->pos_y + p->dir_y * p->mov_spd)][(int)(p->pos_x)] != '1')
+			p->pos_y += p->dir_y * p->mov_spd;
+	}
+	if (key_code == KEY_S)
+	{
+		if (c[(int)(p->pos_y)][(int)(p->pos_x - p->dir_x * p->mov_spd)] != '1')
+			p->pos_x -= p->dir_x * p->mov_spd;
+		if (c[(int)(p->pos_y - p->dir_y * p->mov_spd)][(int)(p->pos_x)] != '1')
+			p->pos_y -= p->dir_y * p->mov_spd;
+	}
+}
+
+void	rotate_player(int key_code, t_game *game)
+{
+	t_player	*p;
+	double		dir_x;
+	double		plane_x;
+
+	p = &game->player;
+	if (key_code == KEY_D)
+	{
+		dir_x = p->dir_x;
+		p->dir_x = p->dir_x * cos(p->rot_spd) - p->dir_y * sin(p->rot_spd);
+		p->dir_y = dir_x * sin(p->rot_spd) + p->dir_y * cos(p->rot_spd);
+		plane_x = p->plane_x;
+		p->plane_x = p->plane_x * cos(p->rot_spd)
+			- p->plane_y * sin(p->rot_spd);
+		p->plane_y = plane_x * sin(p->rot_spd) + p->plane_y * cos(p->rot_spd);
+	}
+	if (key_code == KEY_A)
+	{
+		dir_x = p->dir_x;
+		p->dir_x = p->dir_x * cos(-p->rot_spd) - p->dir_y * sin(-p->rot_spd);
+		p->dir_y = dir_x * sin(-p->rot_spd) + p->dir_y * cos(-p->rot_spd);
+		plane_x = p->plane_x;
+		p->plane_x = p->plane_x * cos(-p->rot_spd)
+			- p->plane_y * sin(-p->rot_spd);
+		p->plane_y = plane_x * sin(-p->rot_spd) + p->plane_y * cos(-p->rot_spd);
 	}
 }
 
 int	deal_key(int key_code, t_game *game)
 {
-	char	**coord = game->map.coord;
+	char		**c;
 	t_player	*p;
 
-	(void)game;
+	c = game->map.coord;
 	p = &game->player;
 	if (key_code == KEY_ESC)
 		exit(0);
-	if (key_code == KEY_W)
-	{
-		if (coord[(int)(p->pos_y)][(int)(p->pos_x + p->dir_x * p->mov_spd)] != '1')
-			p->pos_x += p->dir_x * p->mov_spd;
-		if (coord[(int)(p->pos_y + p->dir_y * p->mov_spd)][(int)(p->pos_x)] != '1')
-			p->pos_y += p->dir_y * p->mov_spd;
-	}
-	if (key_code == KEY_S)
-	{
-		if (coord[(int)(p->pos_y)][(int)(p->pos_x - p->dir_x * p->mov_spd)] != '1')
-			p->pos_x -= p->dir_x * p->mov_spd;
-		if (coord[(int)(p->pos_y - p->dir_y * p->mov_spd)][(int)(p->pos_x)] != '1')
-			p->pos_y -= p->dir_y * p->mov_spd;
-	}
-	if (key_code == KEY_D)
-	{
-		double	old_dir_x = p->dir_x;
-		p->dir_x = p->dir_x * cos(p->rot_spd) - p->dir_y * sin(p->rot_spd);
-		p->dir_y = old_dir_x * sin(p->rot_spd) + p->dir_y * cos(p->rot_spd);
-		double	old_plane_x = p->plane_x;
-		p->plane_x = p->plane_x * cos(p->rot_spd) - p->plane_y * sin(p->rot_spd);
-		p->plane_y = old_plane_x * sin(p->rot_spd) + p->plane_y * cos(p->rot_spd);
-	}
-	if (key_code == KEY_A)
-	{
-		double	old_dir_x = p->dir_x;
-		p->dir_x = p->dir_x * cos(-p->rot_spd) - p->dir_y * sin(-p->rot_spd);
-		p->dir_y = old_dir_x * sin(-p->rot_spd) + p->dir_y * cos(-p->rot_spd);
-		double	old_plane_x = p->plane_x;
-		p->plane_x = p->plane_x * cos(-p->rot_spd) - p->plane_y * sin(-p->rot_spd);
-		p->plane_y = old_plane_x * sin(-p->rot_spd) + p->plane_y * cos(-p->rot_spd);
-	}
+	if (key_code == KEY_W || key_code == KEY_S)
+		move_player(key_code, game);
+	if (key_code == KEY_D || key_code == KEY_A)
+		rotate_player(key_code, game);
 	return (0);
 }
 

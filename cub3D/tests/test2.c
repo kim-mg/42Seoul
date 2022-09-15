@@ -13,7 +13,8 @@ int	main(void) {
 		printf("%f\n", num);
 	else
 		printf("num: %f\tcmp: %f\n", num, cmp);
-	printf("%c\n", arr[(int)num][(int)cmp]);
-	printf("%f\n", 1.0 / 6.0);
+	// printf("%c\n", arr[(int)num][(int)cmp]);
+	// printf("%f\n", 1.0 / 6.0);
+	printf("%d\n", (int)0.6);
 	return (0);
 }
