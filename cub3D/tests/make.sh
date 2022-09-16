@@ -1,0 +1,1 @@
+cc test_RC.c -L ../mlx -lmlx -framework OpenGL -framework Appkit

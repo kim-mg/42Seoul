@@ -71,6 +71,9 @@ typedef struct s_player
 	double	oldTime;
 	double	moveSpeed;
 	double	rotSpeed;
+
+	int		mouse_x;
+	int		mouse_y;
 	
 	t_img	img;
 	t_img	mini_map;
@@ -275,6 +278,20 @@ void	draw_rectangles(t_player *p)
 	}
 }
 
+int	move_mouse(t_player *p)
+{
+	int	x;
+	int	y;
+
+	// (void)p;
+	x = 0;
+	y = 0;
+	// mlx_mouse_get_pos(p->win, &x, &y);
+	// mlx_mouse_get_pos(p->win, &x, &y);
+	printf("mlx_mouse_hook >> X: %d\tY: %d\n", x, y);
+	return (0);
+}
+
 int	main_loop(t_player *p)
 {
 	for(int x = 0; x < w; ++x)
@@ -402,12 +419,19 @@ int	main_loop(t_player *p)
 	draw_lines(p);
 
 	mlx_put_image_to_window(p->mlx, p->win, p->img.ptr, 0, 0);
-	// mlx_destroy_image(p->mlx, p->img.ptr);
-	// test_img_init(p);
+	mlx_destroy_image(p->mlx, p->img.ptr);
+	test_img_init(p);
+
 	// int	i = -1;
 	// while (++i < mapHeight * screenWidth)
 	// 	p->img.data[i] = RGB_Black;
 	// clear_img(p);
+
+	int	x;
+	int	y;
+	mlx_mouse_get_pos(p->win, &x, &y);
+	printf("mouseX: %d\tmouseY: %d\n", x, y);
+	// move_mouse(p);
 	return (0);
 }
 
@@ -433,6 +457,14 @@ int main(void)
 	p.win = mlx_new_window(p.mlx, screenWidth, screenHeight, "test_RC");
 	test_img_init(&p);
 	mlx_hook(p.win, X_EVENT_KEY_PRESS, 1, &deal_key, &p);
+	// mlx_hook(p.win, 6, 0, &move_mouse, &p);
+	// mlx_mouse_hook(p.win, &move_mouse, &p);
+	// mlx_mouse_move();
+	// mlx_mouse_hide();
+	// mlx_mouse_show();
+	
+	mlx_mouse_get_pos(p.win, &p.mouse_x, &p.mouse_y);
+	mlx_mouse_move(p.win, screenWidth / 2, screenHeight / 2);
 	mlx_loop_hook(p.mlx, &main_loop, &p);
 	mlx_loop(p.mlx);
 	return (0);

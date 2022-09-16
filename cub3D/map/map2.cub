@@ -1,7 +1,7 @@
-NO _Ice.xpm
-SO _Mud.xpm
-WE _WaterF1.xpm
-EA _LeavesOP.xpm
+NO ./texture/_Ice.xpm
+SO ./texture/_Mud.xpm
+WE ./texture/_WaterF1.xpm
+EA ./texture/_LeavesOP.xpm
 
 F 220, 100, 0
 C 10, 10, 0

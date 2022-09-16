@@ -35,16 +35,13 @@ t_element	*find_elem(t_element *head, t_identity ident)
 
 t_img	xpm_to_img(t_game *game, char *file, t_parser *parser)
 {
-	char	*path;
 	t_img	img;
 
-	path = ft_strjoin("./texture/", file);
-	img.ptr = mlx_xpm_file_to_image(game->mlx, path, &img.w, &img.h);
-	img.data = (int *)mlx_get_data_addr(img.ptr, &img.bpp,
-			&img.size_l, &img.endian);
-	free(path);
+	img.ptr = mlx_xpm_file_to_image(game->mlx, file, &img.w, &img.h);
 	if (!img.ptr)
 		game_error_exit(game, parser, "xpm file not found");
+	img.data = (int *)mlx_get_data_addr(img.ptr, &img.bpp,
+			&img.size_l, &img.endian);
 	return (img);
 }
 

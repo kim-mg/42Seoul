@@ -56,5 +56,5 @@ void	draw_map(t_game *game)
 	draw_rectangles(game);
 	draw_lines(game);
 	draw_player(game);
-	draw_rays(game, 100);
+	draw_rays(game, RAY_SIZE);
 }

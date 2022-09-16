@@ -36,17 +36,24 @@ void	check_section(t_parser *parser)
 {
 	if (!parser->line)
 		parser->sect = PS_DONE;
+	if (parser->sect_cnt == 2 && parser->line)
+	{
+		while (*parser->line == '\n')
+		{
+			free(parser->line);
+			parser->line = get_next_line(parser->fd);
+		}
+		parser->sect = PS_MAP;
+	}
 	if (parser->sect == PS_NOTMAP)
 	{
 		while (*parser->line == '\n')
 		{
 			free(parser->line);
 			parser->line = get_next_line(parser->fd);
-			if (*parser->line != '\n')
-				parser->sect_cnt++;
 		}
-		if (parser->sect_cnt >= 2 && parser->elem_cnt >= 6)
-			parser->sect = PS_MAP;
+		if (parser->elem_cnt >= 6)
+			parser->sect_cnt = 2;
 	}
 }
 

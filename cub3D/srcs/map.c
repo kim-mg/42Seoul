@@ -64,7 +64,7 @@ char	**mapping(t_map_data *map)
 	int		h;
 
 	rtn = (char **)ft_calloc(sizeof(char *), map->height + 1);
-	if (!map)
+	if (!map || !map->data || *map->data == '\0')
 		return (NULL);
 	h = -1;
 	data = ft_split(map->data, '\n');

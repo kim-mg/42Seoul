@@ -17,8 +17,8 @@ int	get_color(t_game *g, t_img *wall, double pos, double dist)
 	int	y;
 
 	x = (int)(get_wall_x(g, dist) * (double)wall->w);
-	if ((!g->player.side && g->player.raydir_x < 0)
-		|| (g->player.side && g->player.raydir_y < 0))
+	if ((!g->player.side && g->player.raydir_x > 0)
+		|| (g->player.side && g->player.raydir_y > 0))
 		x = wall->w - x - 1;
 	y = (int)pos & (wall->h - 1);
 	return (wall->data[y * wall->w + x]);
@@ -40,7 +40,7 @@ void	draw_texture(t_game *game, int x, t_img *wall, double dist)
 	bottom = (int)((game->map.height + line_h) / 2);
 	if (bottom >= game->map.height)
 		bottom = game->map.height - 1;
-	pos = (top - game->map.height / 2 + line_h / 2) * (1.0 * wall->h / line_h);
+	pos = (top - game->map.height / 2 + line_h / 2) * step;
 	while (top <= bottom)
 	{
 		pos += step;
