@@ -1,4 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/17 15:29:29 by myunkim           #+#    #+#             */
+/*   Updated: 2022/09/17 17:46:18 by myunkim          ###   ########seoul.kr  */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/cub3d.h"
+#include <stdio.h>
 
 void	free_strarr(char **arr)
 {
@@ -41,6 +54,23 @@ void	free_parser(t_parser *parser)
 	}
 }
 
+void	free_images(t_game *game)
+{
+	if (game->texture.get_texture)
+	{
+		if (game->texture.getin & NORTH)
+			mlx_destroy_image(game->mlx, game->texture.n_wall.ptr);
+		if (game->texture.getin & SOUTH)
+			mlx_destroy_image(game->mlx, game->texture.s_wall.ptr);
+		if (game->texture.getin & WEST)
+			mlx_destroy_image(game->mlx, game->texture.w_wall.ptr);
+		if (game->texture.getin & EAST)
+			mlx_destroy_image(game->mlx, game->texture.e_wall.ptr);
+	}
+	if (game->get_img)
+		mlx_destroy_image(game->mlx, game->img.ptr);
+}
+
 void	free_game(t_game *game)
 {
 	char	**temp;
@@ -56,13 +86,6 @@ void	free_game(t_game *game)
 		}
 		free(game->map.coord);
 		game->map.coord = NULL;
-	}
-	if (game->texture.get_texture)
-	{
-		mlx_destroy_image(game->mlx, game->texture.n_wall.ptr);
-		mlx_destroy_image(game->mlx, game->texture.s_wall.ptr);
-		mlx_destroy_image(game->mlx, game->texture.w_wall.ptr);
-		mlx_destroy_image(game->mlx, game->texture.e_wall.ptr);
 	}
 	if (game->win)
 		mlx_destroy_window(game->mlx, game->win);

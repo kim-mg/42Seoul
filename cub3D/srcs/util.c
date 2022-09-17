@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   util.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/17 17:01:46 by myunkim           #+#    #+#             */
+/*   Updated: 2022/09/17 17:46:00 by myunkim          ###   ########seoul.kr  */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/cub3d.h"
 
 int	valid_elem(t_parser *parser, t_parse_section sect)
@@ -50,6 +62,7 @@ void	img_init(t_game *game)
 	game->img.ptr = mlx_new_image(game->mlx, game->map.width, game->map.height);
 	game->img.data = (int *)mlx_get_data_addr(game->img.ptr,
 			&game->img.bpp, &game->img.size_l, &game->img.endian);
+	game->get_img = 1;
 }
 
 void	copy_map(char *map, char *data, int len)

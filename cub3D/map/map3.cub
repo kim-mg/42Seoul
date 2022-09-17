@@ -1,7 +1,7 @@
 NO ./texture/_Ice.xpm
 SO ./texture/_Mud.xpm
-WE ./texture/_WaterF1.xpm
-EA ./texture/_LeavesOP.xpm
+WE ./texture/_CC.xpm
+EA ./texture/_Bricks.xpm
 
 F 128, 128, 128
 C 64,64,64

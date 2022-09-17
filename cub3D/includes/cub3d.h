@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cub3d.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/17 15:27:02 by myunkim           #+#    #+#             */
+/*   Updated: 2022/09/17 18:27:25 by myunkim          ###   ########seoul.kr  */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CUB3D_H
 # define CUB3D_H
 
@@ -9,12 +21,13 @@
 # include "../mlx/mlx.h"
 // #include "../minilibx-linux/mlx.h"
 
-# define X_EVENT_KEY_PRESS	2
+# define X_EVENT_KEY_PRESS		2
+# define X_EVENT_KEY_RELEASE	3
 # define X_EVENT_DESTROY_NOTIFY	17
 
-# define WIDTH		1440
-# define HEIGHT		900
-# define MINI		20
+# define WIDTH		1320
+# define HEIGHT		560
+# define MINI		40
 # define RAY_SIZE	100
 
 enum e_key_setting
@@ -24,6 +37,10 @@ enum e_key_setting
 	KEY_A = 0,
 	KEY_S = 1,
 	KEY_D = 2,
+	KEY_AR_L = 123,
+	KEY_AR_R = 124,
+	KEY_AR_U = 126,
+	KEY_AR_D = 125,
 };
 
 // enum e_ubuntu_key
@@ -53,15 +70,6 @@ typedef enum e_parse_section
 	PS_NOTMAP,
 	PS_DONE,
 }	t_parse_section;
-
-typedef struct s_dda
-{
-	double	x1;
-	double	y1;
-	double	x2;
-	double	y2;
-}t_dda;
-
 
 typedef struct s_element	t_element;
 
@@ -111,6 +119,7 @@ typedef struct s_img
 typedef struct s_texture
 {
 	int		get_texture;
+	int		getin;
 	t_img	n_wall;
 	t_img	s_wall;
 	t_img	w_wall;
@@ -148,20 +157,32 @@ typedef struct s_player
 	double	deltadist_y;
 	int		map_x;
 	int		map_y;
-	double	mov_spd;
-	double	rot_spd;
+	double	m_spd;
+	double	r_spd;
 	double	time;
 	double	old_time;
 }	t_player;
+
+typedef struct s_key
+{
+	int	w;
+	int	s;
+	int	a;
+	int	d;
+	int	r;
+	int	l;
+}	t_key;
 
 typedef struct s_game
 {
 	void		*mlx;
 	void		*win;
+	int			get_img;
 	t_texture	texture;
 	t_map		map;
 	t_player	player;
 	t_img		img;
+	t_key		key;
 }	t_game;
 
 //draw_3d.c
@@ -180,17 +201,22 @@ void		draw_rays(t_game *game, int ray_cnt);
 
 // free.c
 void		free_game(t_game *game);
+void		free_images(t_game *game);
 void		free_parser(t_parser *parser);
 void		free_strarr(char **arr);
 
 // init.c
 int			set_window(t_game *game);
 void		init_game(t_game *game);
+void		init_key(t_game *game);
 void		parser_init(t_parser *parser);
 
 // key.c
-int			close_btn_win(t_game *game);
 int			deal_key(int key_code, t_game *game);
+int			release_key(int key_code, t_game *game);
+void		move_player_ad(t_game *game);
+void		move_player_ws(t_game *game);
+void		rotate_player(t_game *game);
 
 // layer.c
 void		draw_layer(t_game *game, t_map *map);
@@ -205,8 +231,10 @@ void		game_error_exit(t_game *game, t_parser *parser, char *err);
 void		parse_error_exit(t_parser *parser, char *err);
 
 // parsing_util.c
-t_element	*new_elem(t_element *head, char *cont, t_parse_section sect, t_identity ident);
-void		add_elem(t_element **e_head, char *cont, t_parse_section sect, t_identity ident);
+t_element	*new_elem(t_element *head, char *cont,
+				t_parse_section sect, t_identity ident);
+void		add_elem(t_element **e_head, char *cont,
+				t_parse_section sect, t_identity ident);
 char		**pre_proc_elem(char *line);
 
 // parsing.c
@@ -222,10 +250,13 @@ void		draw_texture(t_game *game, int x, t_img *wall, double dist);
 void		set_game(t_game *game, char *data);
 
 // util.c
-int 		valid_elem(t_parser *parser, t_parse_section sect);
+int			valid_elem(t_parser *parser, t_parse_section sect);
 t_element	*find_elem(t_element *head, t_identity ident);
 t_img		xpm_to_img(t_game *game, char *file, t_parser *parser);
 void		img_init(t_game *game);
 void		copy_map(char *map, char *data, int len);
+
+//window.c
+int			close_btn_win(t_game *game);
 
 #endif

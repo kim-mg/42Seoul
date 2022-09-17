@@ -1,5 +1,4 @@
 CC = cc
-# CFLAGS = 
 CFLAGS = -Wall -Wextra -Werror
 
 OS = $(shell uname)
@@ -14,13 +13,7 @@ endif
 
 DIR_HEADERS = ./includes/
 
-# test_RC or not
-ifdef TEST_FLAG
-	DIR_SRCS = ./tests/
-else
-	DIR_SRCS = ./srcs/
-endif
-
+DIR_SRCS = ./srcs/
 DIR_OBJS = ./objs/
 DIR = ./
 
@@ -43,18 +36,15 @@ SRCS = draw_3d.c \
 		set_game.c \
 		texture.c \
 		util.c \
+		window.c \
 		main.c
 
 
 OBJS = $(SRCS:%.c=$(DIR_OBJS)%.o)
 
-# test rule
-test :
-	$(MAKE) TEST_FLAG=1 $(NAME)
-
 all : $(NAME)
 
-debug += CC CFLAGS -g fsanitize=address
+debug += $(CC) CFLAGS -g -fsanitize=address
 debug : all
 
 $(DIR_OBJS) :

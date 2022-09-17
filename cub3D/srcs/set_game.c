@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   set_game.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/09/17 15:30:01 by myunkim           #+#    #+#             */
+/*   Updated: 2022/09/17 17:48:13 by myunkim          ###   ########seoul.kr  */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/cub3d.h"
 
 void	set_player_dir(t_game *game, char *sight)
@@ -55,12 +67,20 @@ void	set_texture(t_parser *parser, t_game *game)
 		game_error_exit(game, parser, "texture element unsatisfied");
 	elem = find_elem(parser->elem_head, NORTH);
 	game->texture.n_wall = xpm_to_img(game, elem->content, parser);
+	if (game->texture.n_wall.ptr)
+		game->texture.getin |= NORTH;
 	elem = find_elem(parser->elem_head, SOUTH);
 	game->texture.s_wall = xpm_to_img(game, elem->content, parser);
+	if (game->texture.s_wall.ptr)
+		game->texture.getin |= SOUTH;
 	elem = find_elem(parser->elem_head, WEST);
 	game->texture.w_wall = xpm_to_img(game, elem->content, parser);
+	if (game->texture.w_wall.ptr)
+		game->texture.getin |= WEST;
 	elem = find_elem(parser->elem_head, EAST);
 	game->texture.e_wall = xpm_to_img(game, elem->content, parser);
+	if (game->texture.e_wall.ptr)
+		game->texture.getin |= EAST;
 	game->texture.get_texture = 1;
 }
 
@@ -69,13 +89,14 @@ void	set_game(t_game *game, char *data)
 	t_parser	parser;
 
 	init_game(game);
+	init_key(game);
 	parse_cub(&parser, data);
 	set_map(&parser, game);
 	if (set_window(game))
 		game_error_exit(game, &parser, "mlx or window init failed");
+	img_init(game);
 	set_texture(&parser, game);
 	set_layer(&parser, game, &game->map);
 	set_player(game);
-	img_init(game);
 	free_parser(&parser);
 }
