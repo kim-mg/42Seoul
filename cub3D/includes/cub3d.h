@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/17 15:27:02 by myunkim           #+#    #+#             */
-/*   Updated: 2022/09/17 18:27:25 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/09/20 14:03:21 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,39 +18,41 @@
 # include <unistd.h>
 # include <sys/time.h>
 # include "../lib/libft/libft.h"
-# include "../mlx/mlx.h"
-// #include "../minilibx-linux/mlx.h"
+// # include "../mlx/mlx.h"
+#include "../minilibx-linux/mlx.h"
 
 # define X_EVENT_KEY_PRESS		2
 # define X_EVENT_KEY_RELEASE	3
 # define X_EVENT_DESTROY_NOTIFY	17
 
-# define WIDTH		1320
-# define HEIGHT		560
-# define MINI		40
+# define WIDTH		640
+# define HEIGHT		480
+# define MINI		10
 # define RAY_SIZE	100
 
-enum e_key_setting
-{
-	KEY_ESC = 53,
-	KEY_W = 13,
-	KEY_A = 0,
-	KEY_S = 1,
-	KEY_D = 2,
-	KEY_AR_L = 123,
-	KEY_AR_R = 124,
-	KEY_AR_U = 126,
-	KEY_AR_D = 125,
-};
-
-// enum e_ubuntu_key
+// enum e_key_setting
 // {
-// 	KEY_ESC = 0xff1b,
-// 	KEY_W = 0x77,
-// 	KEY_A = 0x61,
-// 	KEY_S = 0x73,
-// 	KEY_D = 0x64,
+// 	KEY_ESC = 53,
+// 	KEY_W = 13,
+// 	KEY_A = 0,
+// 	KEY_S = 1,
+// 	KEY_D = 2,
+// 	KEY_AR_L = 123,
+// 	KEY_AR_R = 124,
+// 	KEY_AR_U = 126,
+// 	KEY_AR_D = 125,
 // };
+
+enum e_ubuntu_key
+{
+	KEY_ESC = 0xff1b,
+	KEY_W = 0x77,
+	KEY_A = 0x61,
+	KEY_S = 0x73,
+	KEY_D = 0x64,
+	KEY_AR_L = 0xff51,
+	KEY_AR_R = 0xff53,
+};
 
 typedef enum e_identity
 {

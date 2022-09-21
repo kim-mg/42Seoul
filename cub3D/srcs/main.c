@@ -6,7 +6,7 @@
 /*   By: myunkim <myunkim@student.42seoul.kr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/17 15:29:44 by myunkim           #+#    #+#             */
-/*   Updated: 2022/09/19 18:16:33 by myunkim          ###   ########seoul.kr  */
+/*   Updated: 2022/09/20 14:03:03 by myunkim          ###   ########seoul.kr  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,9 @@ int	main(int argc, char *argv[])
 		valid_extension(argv[argc]);
 	set_game(&game, argv[argc]);
 	mlx_loop_hook(game.mlx, &main_loop, &game);
-	mlx_hook(game.win, X_EVENT_KEY_PRESS, 0, &deal_key, &game);
-	mlx_hook(game.win, X_EVENT_KEY_RELEASE, 0, &release_key, &game);
-	mlx_hook(game.win, X_EVENT_DESTROY_NOTIFY, 0, &close_btn_win, &game);
+	mlx_hook(game.win, X_EVENT_KEY_PRESS, 1, &deal_key, &game);
+	mlx_hook(game.win, X_EVENT_KEY_RELEASE, 2, &release_key, &game);
+	mlx_hook(game.win, X_EVENT_DESTROY_NOTIFY, 3, &close_btn_win, &game);
 	mlx_loop(game.mlx);
 	free_images(&game);
 	free_game(&game);
