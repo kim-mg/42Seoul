@@ -35,6 +35,7 @@ test/
 ## project git
 cpp/*/.git
 netPractice/*.git
+Inception/.git
 
 ## refer
 reff

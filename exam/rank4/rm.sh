@@ -1,0 +1,1 @@
+rm -rf tt microshell leaks.res out.res
